@@ -8,22 +8,25 @@ import java.util.List;
 
 public class Project {
     private int id;
-    private String nameProject;
+    private String projectName;
     private double profitMargin;
     private double totalCost;
     List<Component> components;
     private ProjectStatus status;
     private Client client;
 
-    public Project(int id, String nameProject, double profitMargin, double totalCost,String status,Client client) {
+    public Project(int id, String projectName, double profitMargin, double totalCost, String status, Client client) {
         this.id = id;
-        this.nameProject = nameProject;
+        this.projectName = projectName;
         this.profitMargin = profitMargin;
         this.totalCost = totalCost;
-        this.components = components;
-        components=new ArrayList<>();
-        this.status=ProjectStatus.valueOf(status);
-        this.client=client;
+        this.components = new ArrayList<>();
+        this.status = ProjectStatus.valueOf(status);
+        this.client = client;
+
+    }
+
+    public Project() {
 
     }
 
@@ -43,8 +46,6 @@ public class Project {
         this.client = client;
     }
 
-    public Project() {
-    }
 
     public int getId() {
         return id;
@@ -54,12 +55,12 @@ public class Project {
         this.id = id;
     }
 
-    public String getNameProject() {
-        return nameProject;
+    public String getProjectName() {
+        return projectName;
     }
 
-    public void setNameProject(String nameProject) {
-        this.nameProject = nameProject;
+    public void setProjectName(String projectName) {
+        this.projectName = projectName;
     }
 
     public double getProfitMargin() {
@@ -78,11 +79,11 @@ public class Project {
         this.totalCost = totalCost;
     }
 
-    public List<Component> getcomponents() {
+    public List<Component> getComponents() {
         return components;
     }
 
-    public void setcomponents(List<Component> components) {
+    public void setComponents(List<Component> components) {
         this.components = components;
     }
 
@@ -90,7 +91,7 @@ public class Project {
     public String toString() {
         return "Project{" +
                 "id=" + id +
-                ", nameProject='" + nameProject + '\'' +
+                ", projectName='" + projectName + '\'' +
                 ", profitMargin=" + profitMargin +
                 ", totalCost=" + totalCost +
                 '}';

@@ -1,4 +1,4 @@
-CREATE TABLE Clients (
+CREATE TABLE clients (
  id SERIAL PRIMARY KEY,
  name VARCHAR(255) NOT NULL,
  address VARCHAR(255),
@@ -6,9 +6,9 @@ CREATE TABLE Clients (
  isProfessional BOOLEAN NOT NULL
 );
 
-CREATE TYPE projectStatus AS ENUM ('Inprogress', 'Finished', 'Canceled');
+CREATE TYPE projectStatus AS ENUM ('INPROGRESS', 'FINISHED', 'CANCELLED');
 
-CREATE TABLE Projects (
+CREATE TABLE projects (
 id SERIAL PRIMARY KEY,
 projectName VARCHAR(255) NOT NULL,
 profitMargin DOUBLE PRECISION,
@@ -18,14 +18,14 @@ client_id INT,
 FOREIGN KEY (client_id) REFERENCES Clients(id) ON DELETE CASCADE
 );
 
-CREATE TABLE Components (
+CREATE TABLE components (
 id SERIAL PRIMARY KEY,
 name VARCHAR(255) NOT NULL,
 componentType VARCHAR(255),
 vatRate DOUBLE PRECISION
 );
 
-CREATE TABLE Materials (
+CREATE TABLE materials (
 id SERIAL PRIMARY KEY,
 component_id INT,
 unitCost DOUBLE PRECISION,
@@ -35,7 +35,7 @@ qualityCoefficient DOUBLE PRECISION,
 FOREIGN KEY (component_id) REFERENCES Components(id) ON DELETE CASCADE
 );
 
-CREATE TABLE Labor (
+CREATE TABLE labor (
 id SERIAL PRIMARY KEY,
 component_id INT,
 hourlyRate DOUBLE PRECISION,
@@ -44,7 +44,7 @@ workerProductivity DOUBLE PRECISION,
 FOREIGN KEY (component_id) REFERENCES Components(id) ON DELETE CASCADE
 );
 
-CREATE TABLE Quotes (
+CREATE TABLE quotes (
 id SERIAL PRIMARY KEY,
 estimatedAmount DOUBLE PRECISION,
 issueDate DATE,

@@ -17,10 +17,13 @@ public class DatabaseConnection {
             connection = DriverManager.getConnection(URL, USER, PASSWORD);
             System.out.println("Connection to PostgreSQL database established.");
         } catch (ClassNotFoundException e) {
-            System.out.println("PostgreSQL JDBC Driver not found.");
+            e.printStackTrace();
+            throw new RuntimeException("PostgreSQL JDBC Driver not found.", e);
         } catch (SQLException e) {
-            System.out.println("Connection to PostgreSQL database failed.");
+            e.printStackTrace();
+            throw new RuntimeException("Connection to PostgreSQL database failed.", e);
         }
+
         return connection;
     }
 }
