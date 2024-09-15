@@ -11,11 +11,39 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class ProjectRepository implements ProjectInterface<Project> {
+public class ProjectRepository implements ProjectInterface {
     private final Connection connection;
 
     public ProjectRepository() {
         this.connection = DatabaseConnection.getConnection();
+    }
+
+
+    @Override
+    public void saveClientProject(Client client, Project project) {
+        ClientRepository clientRepository = new ClientRepository();
+        try {
+            connection.setAutoCommit(false);
+            Client savedClient = clientRepository.save(client);
+            project.setClient(savedClient);
+            Project savedProject = save(project);
+            connection.commit();
+            System.out.println("Client and Project saved successfully.");
+            System.out.println("Client ID: " + savedClient.getId() + ", Project ID: " + savedProject.getId());
+        } catch (SQLException e) {
+            System.out.println("Error saving client and project: " + e.getMessage());
+            try {
+                connection.rollback();
+            } catch (SQLException rollbackEx) {
+                System.out.println("Error rolling back transaction: " + rollbackEx.getMessage());
+            }
+        } finally {
+            try {
+                connection.setAutoCommit(true);
+            } catch (SQLException e) {
+                System.out.println("Error resetting auto-commit: " + e.getMessage());
+            }
+        }
     }
 
     @Override
