@@ -1,5 +1,6 @@
 package main.java.service;
 
+import main.java.domain.entities.Client;
 import main.java.domain.entities.Project;
 import main.java.repository.ProjectRepository;
 import main.java.utils.Validations;
@@ -7,7 +8,7 @@ import main.java.utils.Validations;
 import java.util.List;
 import java.util.Optional;
 
-public class ProjectService {
+public class ProjectService  {
     private final ProjectRepository projectRepository;
 
     public ProjectService(ProjectRepository projectRepository) {
@@ -34,6 +35,10 @@ public class ProjectService {
 
     public Optional<Project> findById(Project project) {
         return this.projectRepository.findById(project);
+    }
+
+    public void saveClientProject(Client client, Project project) {
+         this.projectRepository.saveClientProject(client,project);
     }
 
 }

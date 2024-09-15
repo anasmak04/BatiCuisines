@@ -13,4 +13,5 @@ public interface CrudInterface<T> {
     T update(T entity);
 
     boolean delete(T entity);
+
 }

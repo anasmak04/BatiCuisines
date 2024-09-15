@@ -18,25 +18,42 @@ public class ProjectRepository implements ProjectInterface {
         this.connection = DatabaseConnection.getConnection();
     }
 
+    @Override
+    public Project save(Project project) {
+        String sql = "INSERT INTO projects (projectName, profitMargin, totalCost, status, client_id) VALUES (?, ?, ?, ?::projectStatus, ?);";
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+            preparedStatement.setString(1, project.getProjectName());
+            preparedStatement.setDouble(2, project.getProfitMargin());
+            preparedStatement.setDouble(3, project.getTotalCost());
+            preparedStatement.setString(4, project.getStatus().name());
+            preparedStatement.setInt(5, project.getClient().getId());
+
+            int affectedRows = preparedStatement.executeUpdate();
+
+            if (affectedRows == 0) {
+                throw new SQLException("Creating project failed, no rows affected.");
+            }
+
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return project;
+    }
+
 
     @Override
     public void saveClientProject(Client client, Project project) {
-        ClientRepository clientRepository = new ClientRepository();
         try {
             connection.setAutoCommit(false);
+
+            ClientRepository clientRepository = new ClientRepository();
             Client savedClient = clientRepository.save(client);
             project.setClient(savedClient);
-            Project savedProject = save(project);
+            save(project);
             connection.commit();
-            System.out.println("Client and Project saved successfully.");
-            System.out.println("Client ID: " + savedClient.getId() + ", Project ID: " + savedProject.getId());
+
         } catch (SQLException e) {
             System.out.println("Error saving client and project: " + e.getMessage());
-            try {
-                connection.rollback();
-            } catch (SQLException rollbackEx) {
-                System.out.println("Error rolling back transaction: " + rollbackEx.getMessage());
-            }
         } finally {
             try {
                 connection.setAutoCommit(true);
@@ -46,27 +63,6 @@ public class ProjectRepository implements ProjectInterface {
         }
     }
 
-    @Override
-    public Project save(Project project) {
-        String sql = "INSERT INTO projects (projectName, profitMargin, totalCost, status, client_id) VALUES (?, ?, ?, ?::projectStatus, ?)";
-        try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
-            preparedStatement.setString(1, project.getProjectName());
-            preparedStatement.setDouble(2, project.getProfitMargin());
-            preparedStatement.setDouble(3, project.getTotalCost());
-            preparedStatement.setString(4, project.getStatus().name());
-            preparedStatement.setInt(5, project.getClient().getId());
-
-            int result = preparedStatement.executeUpdate();
-            if (result == 1) {
-                System.out.println("Project added successfully");
-            } else {
-                throw new SQLException("Insert failed");
-            }
-        } catch (SQLException e) {
-            System.out.println(e.getMessage());
-        }
-        return project;
-    }
 
     @Override
     public Optional<Project> findById(Project project) {

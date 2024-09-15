@@ -1,6 +1,6 @@
 package main.java.domain.entities;
 
-public class Component {
+public abstract class Component {
     private int id;
     private String name;
     private String componentType;

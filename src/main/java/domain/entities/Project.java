@@ -11,10 +11,9 @@ public class Project {
     private String projectName;
     private double profitMargin;
     private double totalCost;
-    List<Component> components;
     private ProjectStatus status;
     private Client client;
-
+    List<Component> components;
     public Project(int id, String projectName, double profitMargin, double totalCost, String status, Client client) {
         this.id = id;
         this.projectName = projectName;

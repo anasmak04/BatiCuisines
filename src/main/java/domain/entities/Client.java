@@ -41,19 +41,19 @@ public class Client {
         this.name = name;
     }
 
-    public String getaddress() {
+    public String getAddress() {
         return address;
     }
 
-    public void setaddress(String address) {
+    public void setAddress(String address) {
         this.address = address;
     }
 
-    public String getphone() {
+    public String getPhone() {
         return phone;
     }
 
-    public void setphone(String phone) {
+    public void setPhone(String phone) {
         this.phone = phone;
     }
 
@@ -65,11 +65,11 @@ public class Client {
         isProfessional = professional;
     }
 
-    public List<Project> getprojects() {
+    public List<Project> getProjects() {
         return projects;
     }
 
-    public void setprojects(List<Project> projects) {
+    public void setProjects(List<Project> projects) {
         this.projects = projects;
     }
 
