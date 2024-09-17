@@ -6,7 +6,7 @@ public class WorkForce extends Component {
     private double workerProductivity;
     private Component component;
 
-    public WorkForce(int id, String name, String componentType, double vatRate, Project project, double hourlyCost, double workingHours, double workerProductivity, Component component) {
+    public WorkForce(Long id, String name, String componentType, double vatRate, Project project, double hourlyCost, double workingHours, double workerProductivity, Component component) {
         super(id, name, componentType, vatRate, project);
         this.hourlyCost = hourlyCost;
         this.workingHours = workingHours;

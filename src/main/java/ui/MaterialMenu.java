@@ -54,7 +54,7 @@ public class MaterialMenu {
 
             Component savedComponent = componentService.save(component);
 
-            material = new Material(0, name, "Material", vatRate, project, unitCost, quantity, transportCost, coefficientQuality, savedComponent);
+            material = new Material(0L, name, "Material", vatRate, project, unitCost, quantity, transportCost, coefficientQuality, savedComponent);
             materialService.save(material);
             System.out.print("Would you like to add another material? (y/n): ");
             continueChoice = scanner.nextLine().trim().toLowerCase();

@@ -30,11 +30,11 @@ public class ComponentRepository implements ComponentInterface<Component> {
             preparedStatement.setString(1, component.getName());
             preparedStatement.setString(2, component.getComponentType());
             preparedStatement.setDouble(3, component.getVatRate());
-            preparedStatement.setInt(4, component.getProject().getId());
+            preparedStatement.setLong(4, component.getProject().getId());
 
             ResultSet resultSet = preparedStatement.executeQuery();
             if (resultSet.next()) {
-                component.setId(resultSet.getInt("id"));
+                component.setId(resultSet.getLong("id"));
                 return component;
             } else {
                 throw new SQLException("Creating component failed, no ID obtained.");
@@ -47,21 +47,21 @@ public class ComponentRepository implements ComponentInterface<Component> {
 
 
     @Override
-    public Optional<Component> findById(int id) {
+    public Optional<Component> findById(Long id) {
         String query = "SELECT * FROM components WHERE id = ?";
         try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
-            preparedStatement.setInt(1, id);
+            preparedStatement.setLong(1, id);
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
                 if (resultSet.next()) {
 
                     Client client = new Client();
-                    client.setId(resultSet.getInt("id"));
+                    client.setId(resultSet.getLong("id"));
                     client.setName(resultSet.getString("name"));
                     client.setAddress(resultSet.getString("address"));
                     client.setPhone(resultSet.getString("phone"));
                     client.setProfessional(resultSet.getBoolean("isProfessional"));
                     Project project = new Project(
-                            resultSet.getInt("id"),
+                            resultSet.getLong("id"),
                             resultSet.getString("projectName"),
                             resultSet.getDouble("profitMargin"),
                             resultSet.getDouble("totalCost"),
@@ -71,7 +71,7 @@ public class ComponentRepository implements ComponentInterface<Component> {
                     );
 
                     Component foundComponent = new Component(
-                            resultSet.getInt("id"),
+                            resultSet.getLong("id"),
                             resultSet.getString("name"),
                             resultSet.getString("componentType"),
                             resultSet.getDouble("vatRate"),
@@ -103,13 +103,13 @@ public class ComponentRepository implements ComponentInterface<Component> {
             while (resultSet.next()) {
 
                 Client client = new Client();
-                client.setId(resultSet.getInt("id"));
+                client.setId(resultSet.getLong("id"));
                 client.setName(resultSet.getString("name"));
                 client.setAddress(resultSet.getString("address"));
                 client.setPhone(resultSet.getString("phone"));
                 client.setProfessional(resultSet.getBoolean("isProfessional"));
                 Project project = new Project(
-                        resultSet.getInt("id"),
+                        resultSet.getLong("id"),
                         resultSet.getString("projectName"),
                         resultSet.getDouble("profitMargin"),
                         resultSet.getDouble("totalCost"),
@@ -119,7 +119,7 @@ public class ComponentRepository implements ComponentInterface<Component> {
                 );
 
                 Component component = new Component(
-                        resultSet.getInt("id"),
+                        resultSet.getLong("id"),
                         resultSet.getString("name"),
                         resultSet.getString("componentType"),
                         resultSet.getDouble("vatRate"),
@@ -141,7 +141,7 @@ public class ComponentRepository implements ComponentInterface<Component> {
             preparedStatement.setString(1, component.getName());
             preparedStatement.setString(2, component.getComponentType());
             preparedStatement.setDouble(3, component.getVatRate());
-            preparedStatement.setInt(4, component.getId());
+            preparedStatement.setLong(4, component.getId());
             int result = preparedStatement.executeUpdate();
             if (result > 0) {
                 System.out.println("Component saved successfully");
@@ -156,10 +156,10 @@ public class ComponentRepository implements ComponentInterface<Component> {
     }
 
     @Override
-    public boolean delete(int id) {
+    public boolean delete(Long id) {
         String sql = "DELETE FROM components WHERE id = ?";
         try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
-            preparedStatement.setInt(1, id);
+            preparedStatement.setLong(1, id);
             int result = preparedStatement.executeUpdate();
             if (result == 1) {
                 System.out.println("Component deleted successfully");
@@ -170,5 +170,23 @@ public class ComponentRepository implements ComponentInterface<Component> {
             throw new ComponentNotFoundException(sqlException.getMessage());
         }
         return false;
+    }
+
+    @Override
+    public void updateFieldsComponent(Long componentId, double vta) {
+        String sql = "UPDATE components SET vatRate ?  WHERE id = ?";
+        try(PreparedStatement preparedStatement = connection.prepareStatement(sql)){
+            preparedStatement.setDouble(1, vta);
+            preparedStatement.setLong(2, componentId);
+            int result = preparedStatement.executeUpdate();
+            if (result == 1) {
+                System.out.println("component updated successfully");
+            }
+            else{
+                System.out.println("Update failed, project not found");
+            }
+        }catch (SQLException sqlException){
+            System.out.println(sqlException.getMessage());
+        }
     }
 }

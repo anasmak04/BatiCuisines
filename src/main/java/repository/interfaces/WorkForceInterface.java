@@ -10,7 +10,7 @@ public interface WorkForceInterface<T extends WorkForce> extends CrudInterface<W
     public WorkForce save(WorkForce workForce);
 
     @Override
-    public Optional<WorkForce> findById(int id);
+    public Optional<WorkForce> findById(Long id);
 
     @Override
     public List<WorkForce> findAll();
@@ -19,5 +19,5 @@ public interface WorkForceInterface<T extends WorkForce> extends CrudInterface<W
     public WorkForce update(WorkForce entity);
 
     @Override
-    public boolean delete(int id);
+    public boolean delete(Long id);
 }

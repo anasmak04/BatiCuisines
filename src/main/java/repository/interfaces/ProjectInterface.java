@@ -13,7 +13,7 @@ public interface ProjectInterface extends CrudInterface<Project>{
     public Project save(Project entity);
 
     @Override
-    public Optional<Project> findById(int id);
+    public Optional<Project> findById(Long id);
 
     @Override
     public List<Project> findAll();
@@ -22,7 +22,9 @@ public interface ProjectInterface extends CrudInterface<Project>{
     public Project update(Project entity);
 
     @Override
-    public boolean delete(int id);
+    public boolean delete(Long id);
+
+    public boolean updateFields(Long projectId , double marginProfit , double totalCost);
 
 //    public void saveProjectWithDetails(Client client, Project project, Material material, WorkForce workForce);
 }

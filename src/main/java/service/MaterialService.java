@@ -20,7 +20,7 @@ public class MaterialService  {
     }
 
 
-    public Optional<Material> findById(int id) {
+    public Optional<Material> findById(Long id) {
         return materialRepository.findById(id);
     }
 
@@ -35,7 +35,7 @@ public class MaterialService  {
     }
 
 
-    public boolean delete(int id) {
+    public boolean delete(Long id) {
         return materialRepository.delete(id);
     }
 }

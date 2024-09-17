@@ -30,7 +30,7 @@ public class MaterialRepository implements MaterialInterface<Material> {
         String sql = "INSERT INTO materials (component_id, unitCost, quantity, transportCost, qualityCoefficient) " +
                 "VALUES (?, ?, ?, ?, ?) RETURNING id";
         try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
-            preparedStatement.setInt(1, material.getComponent().getId());
+            preparedStatement.setLong(1, material.getComponent().getId());
             preparedStatement.setDouble(2, material.getUnitCost());
             preparedStatement.setDouble(3, material.getQuantity());
             preparedStatement.setDouble(4, material.getTransportCost());
@@ -38,7 +38,7 @@ public class MaterialRepository implements MaterialInterface<Material> {
 
             ResultSet resultSet = preparedStatement.executeQuery();
             if (resultSet.next()) {
-                int generatedId = resultSet.getInt(1);
+                Long generatedId = resultSet.getLong(1);
                 material.setId(generatedId);
                 System.out.println("Material saved successfully with ID: " + generatedId);
             } else {
@@ -53,7 +53,7 @@ public class MaterialRepository implements MaterialInterface<Material> {
 
 
     @Override
-    public Optional<Material> findById(int id) {
+    public Optional<Material> findById(Long id) {
         String sql = "SELECT \n" +
                 "    m.unitCost AS unitCost, \n" +
                 "    m.quantity AS quantity,\n" +
@@ -71,19 +71,19 @@ public class MaterialRepository implements MaterialInterface<Material> {
 
         try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
 
-            preparedStatement.setInt(1, id);
+            preparedStatement.setLong(1, id);
             ResultSet resultSet = preparedStatement.executeQuery();
 
             if (resultSet.next()) {
                 Material foundMaterial = new Material();
-                foundMaterial.setId(resultSet.getInt("materialId")); // Ensure your Material class has this method
+                foundMaterial.setId(resultSet.getLong("materialId"));
                 foundMaterial.setUnitCost(resultSet.getDouble("unitCost"));
                 foundMaterial.setQuantity(resultSet.getDouble("quantity"));
                 foundMaterial.setTransportCost(resultSet.getDouble("transportCost"));
                 foundMaterial.setCoefficientQuality(resultSet.getDouble("coefficientQuality"));
 
                 Component component = new Component();
-                component.setId(resultSet.getInt("componentId"));
+                component.setId(resultSet.getLong("componentId"));
                 component.setName(resultSet.getString("componentName"));
                 component.setVatRate(resultSet.getDouble("vatRate"));
 
@@ -119,13 +119,13 @@ public class MaterialRepository implements MaterialInterface<Material> {
 
             while (resultSet.next()) {
                 Material material = new Material();
-                material.setId(resultSet.getInt("materialId"));
+                material.setId(resultSet.getLong("materialId"));
                 material.setTransportCost(resultSet.getDouble("transportcost"));
                 material.setCoefficientQuality(resultSet.getDouble("qualitycoefficient"));
                 material.setUnitCost(resultSet.getDouble("unitcost"));
 
                 Component component = new Component();
-                component.setId(resultSet.getInt("componentId"));
+                component.setId(resultSet.getLong("componentId"));
                 component.setName(resultSet.getString("componentName"));
                 component.setVatRate(resultSet.getDouble("VatRate"));
 
@@ -146,10 +146,10 @@ public class MaterialRepository implements MaterialInterface<Material> {
     }
 
     @Override
-    public boolean delete(int id) {
+    public boolean delete(Long id) {
         String sql = "DELETE FROM materials WHERE id = ?";
         try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
-            preparedStatement.setInt(1, id);
+            preparedStatement.setLong(1, id);
             int result = preparedStatement.executeUpdate();
             if (result == 1) {
                 System.out.println("Material deleted successfully with ID: " + id);

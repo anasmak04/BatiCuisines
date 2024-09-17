@@ -22,7 +22,7 @@ public class ProjectService  {
         return this.projectRepository.save(project);
     }
 
-    public boolean delete(int id) {
+    public boolean delete(Long id) {
         return projectRepository.delete(id);
     }
 
@@ -34,7 +34,7 @@ public class ProjectService  {
         return this.projectRepository.findAll();
     }
 
-    public Optional<Project> findById(int id) {
+    public Optional<Project> findById(Long id) {
         return this.projectRepository.findById(id);
     }
 

@@ -29,14 +29,14 @@ public class WorkForceRepository implements WorkForceInterface<WorkForce> {
         String sql = "INSERT INTO labor (component_id, hourlyRate, workHours, workerProductivity) " +
                 "VALUES (?, ?, ?, ?) RETURNING id";
         try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
-            preparedStatement.setInt(1, workForce.getComponent().getId());
+            preparedStatement.setLong(1, workForce.getComponent().getId());
             preparedStatement.setDouble(2, workForce.getHourlyCost());
             preparedStatement.setDouble(3, workForce.getWorkingHours());
             preparedStatement.setDouble(4, workForce.getWorkerProductivity());
 
             ResultSet resultSet = preparedStatement.executeQuery();
             if (resultSet.next()) {
-                int generatedId = resultSet.getInt(1);
+                Long generatedId = resultSet.getLong(1);
                 workForce.setId(generatedId);
                 System.out.println("Work force saved successfully with ID: " + generatedId);
             } else {
@@ -51,7 +51,7 @@ public class WorkForceRepository implements WorkForceInterface<WorkForce> {
 
 
     @Override
-    public Optional<WorkForce> findById(int id) {
+    public Optional<WorkForce> findById(Long id) {
         return Optional.empty();
     }
 
@@ -63,12 +63,12 @@ public class WorkForceRepository implements WorkForceInterface<WorkForce> {
             List<WorkForce> workForces = new ArrayList<>();
             while (resultSet.next()){
                 WorkForce workForce = new WorkForce();
-                workForce.setId(resultSet.getInt("id"));
+                workForce.setId(resultSet.getLong("id"));
                 workForce.setHourlyCost(resultSet.getDouble("hourlyCost"));
                 workForce.setWorkingHours(resultSet.getDouble("workingHours"));
                 workForce.setWorkerProductivity(resultSet.getDouble("workerProductivity"));
                 Component component = new Component();
-                component.setId(resultSet.getInt("component_id"));
+                component.setId(resultSet.getLong("component_id"));
                 workForce.setComponent(component);
                 workForces.add(workForce);
             }
@@ -85,7 +85,7 @@ public class WorkForceRepository implements WorkForceInterface<WorkForce> {
     }
 
     @Override
-    public boolean delete(int id) {
+    public boolean delete(Long id) {
         return false;
     }
 }

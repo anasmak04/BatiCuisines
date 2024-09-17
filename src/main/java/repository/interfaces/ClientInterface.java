@@ -11,7 +11,7 @@ public interface ClientInterface extends CrudInterface<Client> {
     public Client save(Client client);
 
     @Override
-    public Optional<Client> findById(int id);
+    public Optional<Client> findById(Long id);
 
     @Override
     public List<Client> findAll();
@@ -20,7 +20,7 @@ public interface ClientInterface extends CrudInterface<Client> {
     public Client update(Client client);
 
     @Override
-    public boolean delete(int id);
+    public boolean delete(Long id);
 
     public Optional<Client> findByName(String name);
 }

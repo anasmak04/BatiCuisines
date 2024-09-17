@@ -53,7 +53,7 @@ public class ClientMenu {
         String phoneNumber = scanner.nextLine();
         System.out.print("Enter status for a client is professional or not : ");
         boolean status = scanner.nextBoolean();
-        Client client = new Client(0, name, address, phoneNumber, status);
+        Client client = new Client(0L, name, address, phoneNumber, status);
         return clientService.save(client);
     }
 

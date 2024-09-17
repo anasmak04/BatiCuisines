@@ -3,14 +3,14 @@ package main.java.domain.entities;
 import java.time.LocalDate;
 
 public class Devis {
-    private int id;
+    private Long id;
     private double estimatedAmount;
     private LocalDate issueDate;
     private LocalDate validatedDate;
     private boolean isAccepted;
     private Project project;
 
-    public Devis(int id, double estimatedAmount, LocalDate issueDate, LocalDate validatedDate, boolean isAccepted, Project project) {
+    public Devis(Long id, double estimatedAmount, LocalDate issueDate, LocalDate validatedDate, boolean isAccepted, Project project) {
         this.id = id;
         this.estimatedAmount = estimatedAmount;
         this.issueDate = issueDate;
@@ -19,17 +19,17 @@ public class Devis {
         this.project = project;
     }
 
-    public Devis(int id){
+    public Devis(Long id){
         this.id = id;
     }
 
     public Devis() {}
 
-    public int getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

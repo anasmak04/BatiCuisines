@@ -7,7 +7,7 @@ import java.util.List;
 
 
 public class Project {
-    private int id;
+    private Long id;
     private String projectName;
     private double profitMargin;
     private double totalCost;
@@ -16,7 +16,7 @@ public class Project {
     private Client client;
     List<Component> components;
 
-    public Project(int id, String projectName, double profitMargin, double totalCost, String status, double surface, Client client) {
+    public Project(Long id, String projectName, double profitMargin, double totalCost, String status, double surface, Client client) {
         this.id = id;
         this.projectName = projectName;
         this.profitMargin = profitMargin;
@@ -49,11 +49,11 @@ public class Project {
     }
 
 
-    public int getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

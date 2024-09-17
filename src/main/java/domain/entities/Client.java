@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Client {
-    private int id;
+    private Long id;
     private String name;
     private String address;
     private String phone;
@@ -12,7 +12,7 @@ public class Client {
     private List<Project> projects;
 
 
-    public Client(int id, String name, String address, String phone, boolean isProfessional) {
+    public Client(Long id, String name, String address, String phone, boolean isProfessional) {
         this.id = id;
         this.name = name;
         this.address = address;
@@ -25,11 +25,11 @@ public class Client {
         projects = new ArrayList<>();
     }
 
-    public int getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

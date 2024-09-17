@@ -19,7 +19,7 @@ public class ClientService  {
         return this.clientRepository.save(Client);
     }
 
-    public Optional<Client> findById(int  id) {
+    public Optional<Client> findById(Long id) {
         return this.clientRepository.findById(id);
     }
 
@@ -27,7 +27,7 @@ public class ClientService  {
         return this.clientRepository.update(Client);
     }
 
-    public boolean delete(int id) {
+    public boolean delete(Long id) {
         return this.clientRepository.delete(id);
     }
 

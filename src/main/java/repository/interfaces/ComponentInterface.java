@@ -11,7 +11,7 @@ public interface ComponentInterface  <T extends Component> extends CrudInterface
     public Component save(Component component);
 
     @Override
-    public Optional<Component> findById(int id);
+    public Optional<Component> findById(Long id);
 
     @Override
     public List<Component> findAll();
@@ -20,6 +20,8 @@ public interface ComponentInterface  <T extends Component> extends CrudInterface
     public Component update(Component component);
 
     @Override
-    public boolean delete(int id);
+    public boolean delete(Long id);
+
+    public void updateFieldsComponent(Long componentId, double vta);
 
 }

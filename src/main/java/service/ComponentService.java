@@ -21,7 +21,7 @@ public class ComponentService   {
     }
 
 
-    public Optional<Component> findById(int id) {
+    public Optional<Component> findById(Long id) {
         return Optional.empty();
     }
 

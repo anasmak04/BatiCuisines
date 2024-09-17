@@ -72,13 +72,13 @@ public class DevisMenu {
         String validatedDate = scanner.nextLine();
         LocalDate validatedDateParse = DateFormat.parseDate(validatedDate);
 
-        Devis devis = new Devis(0, estimatedAmount, issueDateParse, validatedDateParse, false, project);
+        Devis devis = new Devis(0L, estimatedAmount, issueDateParse, validatedDateParse, false, project);
         devisService.save(devis);
     }
 
     private void deleteDevis() {
         System.out.print("Enter Devis ID: ");
-        int id = scanner.nextInt();
+        Long id = scanner.nextLong();
         scanner.nextLine();
         devisService.delete(id);
     }
@@ -89,7 +89,7 @@ public class DevisMenu {
 
     private void findById() {
         System.out.print("Enter Devis ID: ");
-        int id = scanner.nextInt();
+        Long id = scanner.nextLong();
         scanner.nextLine();
         devisService.findById(id);
     }

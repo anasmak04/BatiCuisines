@@ -51,7 +51,7 @@ public class WorkForceMenu {
 
             Component savedComponent = componentService.save(component);
 
-            workForce = new WorkForce(0, name, "workforce", vatRate, project, hourlyRate, hoursWorked, productivityFactor, savedComponent);
+            workForce = new WorkForce(0L, name, "workforce", vatRate, project, hourlyRate, hoursWorked, productivityFactor, savedComponent);
             workForceService.save(workForce);
 
             System.out.print("Would you like to add another workforce? (y/n): ");
@@ -67,11 +67,11 @@ public class WorkForceMenu {
         this.workForceService.update(workForce);
     }
 
-    public void delete(int id) {
+    public void delete(Long id) {
         this.workForceService.delete(id);
     }
 
-    public void findById(int id) {
+    public void findById(Long id) {
         this.workForceService.findById(id);
     }
 

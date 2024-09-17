@@ -20,7 +20,7 @@ public class WorkForceService  {
     }
 
 
-    public Optional<WorkForce> findById(int id) {
+    public Optional<WorkForce> findById(Long id) {
         return this.workForceRepository.findById(id);
     }
 
@@ -35,7 +35,7 @@ public class WorkForceService  {
     }
 
 
-    public boolean delete(int id) {
+    public boolean delete(Long id) {
         return this.workForceRepository.delete(id);
     }
 }

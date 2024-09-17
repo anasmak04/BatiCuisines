@@ -17,7 +17,7 @@ public class DevisService {
         return this.devisRepository.save(devis);
     }
 
-    public Optional<Devis> findById(int id) {
+    public Optional<Devis> findById(Long id) {
         return this.devisRepository.findById(id);
     }
 
@@ -25,7 +25,7 @@ public class DevisService {
         return this.devisRepository.update(devis);
     }
 
-    public boolean delete(int id) {
+    public boolean delete(Long id) {
         return this.devisRepository.delete(id);
     }
 

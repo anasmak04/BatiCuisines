@@ -92,7 +92,7 @@ public class ProjectMenu {
             double surface = scanner.nextDouble();
             scanner.nextLine();
 
-            Project project = new Project(0, name, 0, 0, projectStatus.name(), surface, selectedClient);
+            Project project = new Project(0L, name, 0, 0, projectStatus.name(), surface, selectedClient);
             Project savedProject = projectService.save(project);
 
             Material savedMaterial = materialMenu.addMaterial(savedProject);

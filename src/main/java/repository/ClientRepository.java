@@ -28,7 +28,7 @@ public class ClientRepository implements ClientInterface {
 
             try (ResultSet generatedKeys = preparedStatement.executeQuery()) {
                 if (generatedKeys.next()) {
-                    int id = generatedKeys.getInt(1);
+                    Long id = generatedKeys.getLong(1);
                     client.setId(id);
                 } else {
                     throw new SQLException("Creating client failed, no ID obtained.");
@@ -42,14 +42,14 @@ public class ClientRepository implements ClientInterface {
 
 
     @Override
-    public Optional<Client> findById(int id) {
+    public Optional<Client> findById(Long id) {
         String query = "SELECT * FROM clients WHERE id = ?";
         try(PreparedStatement preparedStatement = connection.prepareStatement("sql")) {
-            preparedStatement.setInt(1, id);
+            preparedStatement.setLong(1, id);
             ResultSet resultSet = preparedStatement.executeQuery();
             Client client = new Client();
             if (resultSet.next()) {
-                client.setId(resultSet.getInt("id"));
+                client.setId(resultSet.getLong("id"));
                client.setName(resultSet.getString("name"));
                client.setAddress(resultSet.getString("address"));
                client.setPhone(resultSet.getString("phone"));
@@ -71,7 +71,7 @@ public class ClientRepository implements ClientInterface {
 
             while (resultSet.next()) {
                 Client client = new Client();
-                client.setId(resultSet.getInt("id"));
+                client.setId(resultSet.getLong("id"));
                 client.setName(resultSet.getString("name"));
                 client.setAddress(resultSet.getString("address"));
                 client.setPhone(resultSet.getString("phone"));
@@ -92,7 +92,7 @@ public class ClientRepository implements ClientInterface {
             preparedStatement.setString(2, client.getAddress());
             preparedStatement.setString(3, client.getPhone());
             preparedStatement.setBoolean(4, client.isProfessional());
-            preparedStatement.setInt(5, client.getId());
+            preparedStatement.setLong(5, client.getId());
             preparedStatement.executeUpdate();
             connection.commit();
         } catch (SQLException e) {
@@ -106,11 +106,11 @@ public class ClientRepository implements ClientInterface {
     }
 
     @Override
-    public boolean delete(int id) {
+    public boolean delete(Long id) {
         String query = "DELETE FROM clients WHERE id = ?";
 
         try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
-            preparedStatement.setInt(1, id);
+            preparedStatement.setLong(1, id);
             int result = preparedStatement.executeUpdate();
             if (result == 1) {
                 return true;
@@ -140,7 +140,7 @@ public class ClientRepository implements ClientInterface {
 
     private Client mapResultSetToClient(ResultSet rs) throws SQLException {
         Client client = new Client();
-        client.setId(rs.getInt("id"));
+        client.setId(rs.getLong("id"));
         client.setName(rs.getString("name"));
         client.setAddress(rs.getString("address"));
         client.setPhone(rs.getString("phone"));

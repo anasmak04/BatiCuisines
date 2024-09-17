@@ -4,14 +4,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 public  class Component {
-    private int id;
+    private Long id;
     private String name;
     private String componentType;
     private double vatRate;
     private Project project;
     private List<Material> materials = new ArrayList<>();
     private List<WorkForce> workForces = new ArrayList<>();
-    public Component(int id, String name, String componentType, double vatRate, Project project) {
+
+    public Component(Long id, String name, String componentType, double vatRate, Project project) {
         this.id = id;
         this.name = name;
         this.componentType = componentType;
@@ -23,11 +24,11 @@ public  class Component {
 
     }
 
-    public int getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

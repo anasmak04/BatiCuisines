@@ -25,11 +25,11 @@ public class DevisRepository implements DevisInterface {
             preparedStatement.setDouble(1, devis.getEstimatedAmount());
             preparedStatement.setDate(2, java.sql.Date.valueOf(devis.getIssueDate()));
             preparedStatement.setBoolean(3, devis.isAccepted());
-            preparedStatement.setInt(4, devis.getProject().getId());
+            preparedStatement.setLong(4, devis.getProject().getId());
 
             try (ResultSet generatedKeys = preparedStatement.executeQuery()) {
                 if (generatedKeys.next()) {
-                    int id = generatedKeys.getInt(1);
+                    Long id = generatedKeys.getLong(1);
                     devis.setId(id);
                     System.out.println("Quote was successfully saved with ID " + id);
                 } else {
@@ -43,7 +43,7 @@ public class DevisRepository implements DevisInterface {
     }
 
     @Override
-    public Optional<Devis> findById(int id) {
+    public Optional<Devis> findById(Long id) {
         String query = "SELECT q.id, q.estimatedAmount, q.issueDate, q.isAccepted, q.project_id, " +
                 "p.projectName, p.profitMargin, p.totalCost, p.status, " +
                 "c.id AS client_id, c.name, c.address, c.phone, c.isProfessional " +
@@ -54,11 +54,11 @@ public class DevisRepository implements DevisInterface {
 
         try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
 
-            preparedStatement.setInt(1, id);
+            preparedStatement.setLong(1, id);
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
                 if (resultSet.next()) {
                     Client client = new Client(
-                            resultSet.getInt("client_id"),
+                            resultSet.getLong("client_id"),
                             resultSet.getString("name"),
                             resultSet.getString("address"),
                             resultSet.getString("phone"),
@@ -66,7 +66,7 @@ public class DevisRepository implements DevisInterface {
                     );
 
                     Project project = new Project(
-                            resultSet.getInt("project_id"),
+                            resultSet.getLong("project_id"),
                             resultSet.getString("projectName"),
                             resultSet.getDouble("profitMargin"),
                             resultSet.getDouble("totalCost"),
@@ -76,7 +76,7 @@ public class DevisRepository implements DevisInterface {
                     );
 
                     Devis foundDevis = new Devis(
-                            resultSet.getInt("id"),
+                            resultSet.getLong("id"),
                             resultSet.getDouble("estimatedAmount"),
                             resultSet.getDate("issueDate").toLocalDate(),
                             resultSet.getDate("validatedDate").toLocalDate(),
@@ -106,7 +106,7 @@ public class DevisRepository implements DevisInterface {
              ResultSet resultSet = preparedStatement.executeQuery()) {
             while (resultSet.next()) {
                 Client client = new Client(
-                        resultSet.getInt("client_id"),
+                        resultSet.getLong("client_id"),
                         resultSet.getString("name"),
                         resultSet.getString("address"),
                         resultSet.getString("phone"),
@@ -114,7 +114,7 @@ public class DevisRepository implements DevisInterface {
                 );
 
                 Project project = new Project(
-                        resultSet.getInt("project_id"),
+                        resultSet.getLong("project_id"),
                         resultSet.getString("projectName"),
                         resultSet.getDouble("profitMargin"),
                         resultSet.getDouble("totalCost"),
@@ -124,7 +124,7 @@ public class DevisRepository implements DevisInterface {
                 );
 
                 Devis devis = new Devis(
-                        resultSet.getInt("id"),
+                        resultSet.getLong("id"),
                         resultSet.getDouble("estimatedAmount"),
                         resultSet.getDate("issueDate").toLocalDate(),
                         resultSet.getDate("validatedDate").toLocalDate(),
@@ -148,8 +148,8 @@ public class DevisRepository implements DevisInterface {
             preparedStatement.setDouble(1, devis.getEstimatedAmount());
             preparedStatement.setDate(2, java.sql.Date.valueOf(devis.getIssueDate()));
             preparedStatement.setBoolean(3, devis.isAccepted());
-            preparedStatement.setInt(4, devis.getProject().getId());
-            preparedStatement.setInt(5, devis.getId());
+            preparedStatement.setLong(4, devis.getProject().getId());
+            preparedStatement.setLong(5, devis.getId());
 
             int affectedRows = preparedStatement.executeUpdate();
             if (affectedRows == 1) {
@@ -164,10 +164,10 @@ public class DevisRepository implements DevisInterface {
     }
 
     @Override
-    public boolean delete(int id) {
+    public boolean delete(Long id) {
         String query = "DELETE FROM quotes WHERE id = ?";
         try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
-            preparedStatement.setInt(1, id);
+            preparedStatement.setLong(1, id);
             int affectedRows = preparedStatement.executeUpdate();
             return affectedRows == 1;
         } catch (SQLException e) {
