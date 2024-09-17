@@ -1,8 +1,10 @@
 package main.java.service;
 
 import main.java.domain.entities.Client;
+import main.java.domain.entities.Material;
 import main.java.domain.entities.Project;
-import main.java.repository.ProjectRepository;
+import main.java.domain.entities.WorkForce;
+import main.java.repository.*;
 import main.java.utils.Validations;
 
 import java.util.List;
@@ -15,14 +17,13 @@ public class ProjectService  {
         this.projectRepository = projectRepository;
     }
 
-
     public Project save(Project project) {
         Validations.projectValidation(project);
         return this.projectRepository.save(project);
     }
 
-    public Boolean delete(Project project) {
-        return projectRepository.delete(project);
+    public boolean delete(int id) {
+        return projectRepository.delete(id);
     }
 
     public Project update(Project project) {
@@ -33,12 +34,12 @@ public class ProjectService  {
         return this.projectRepository.findAll();
     }
 
-    public Optional<Project> findById(Project project) {
-        return this.projectRepository.findById(project);
+    public Optional<Project> findById(int id) {
+        return this.projectRepository.findById(id);
     }
 
-    public void saveClientProject(Client client, Project project) {
-         this.projectRepository.saveClientProject(client,project);
-    }
+//    public void saveProjectWithDetails(Client client, Project project, Material material, WorkForce workForce) {
+//        this.projectRepository.saveProjectWithDetails(client, project,material, workForce);
+//    }
 
 }

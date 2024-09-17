@@ -12,15 +12,18 @@ public class Project {
     private double profitMargin;
     private double totalCost;
     private ProjectStatus status;
+    private double surface;
     private Client client;
     List<Component> components;
-    public Project(int id, String projectName, double profitMargin, double totalCost, String status, Client client) {
+
+    public Project(int id, String projectName, double profitMargin, double totalCost, String status, double surface, Client client) {
         this.id = id;
         this.projectName = projectName;
         this.profitMargin = profitMargin;
         this.totalCost = totalCost;
         this.components = new ArrayList<>();
         this.status = ProjectStatus.valueOf(status);
+        this.surface = surface;
         this.client = client;
 
     }
@@ -84,6 +87,23 @@ public class Project {
 
     public void setComponents(List<Component> components) {
         this.components = components;
+    }
+
+    public double getSurface() {
+
+        return surface;
+    }
+
+    public void setSurface(double surface) {
+        this.surface = surface;
+    }
+
+    public void addComponent(Component component){
+        components.add(component);
+    }
+
+    public void removeComponent(Component component){
+        components.remove(component);
     }
 
     @Override

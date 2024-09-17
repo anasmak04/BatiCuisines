@@ -6,12 +6,12 @@ import java.util.Optional;
 public interface CrudInterface<T> {
     T save(T entity);
 
-    Optional<T> findById(T t);
+    Optional<T> findById(int id);
 
     List<T> findAll();
 
     T update(T entity);
 
-    boolean delete(T entity);
+    boolean delete(int id);
 
 }

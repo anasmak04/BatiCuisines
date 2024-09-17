@@ -1,0 +1,2 @@
+ALTER TABLE projects
+    ADD COLUMN surface DOUBLE PRECISION;
