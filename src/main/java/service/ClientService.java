@@ -35,11 +35,8 @@ public class ClientService {
         return this.clientRepository.findAll();
     }
 
-
     public Optional<Client> findByName(String name) {
         Validations.ClientByNameValidation(name);
         return this.clientRepository.findByName(name);
     }
-
-
 }
