@@ -26,5 +26,6 @@ public interface ProjectInterface extends CrudInterface<Project>{
 
     public boolean updateFields(Long projectId , double marginProfit , double totalCost);
 
-//    public void saveProjectWithDetails(Client client, Project project, Material material, WorkForce workForce);
+
+     public Project findProjectByName(String name);
 }

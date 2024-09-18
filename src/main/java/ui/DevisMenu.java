@@ -2,10 +2,13 @@ package main.java.ui;
 
 import main.java.domain.entities.Devis;
 import main.java.domain.entities.Project;
+import main.java.exception.ProjectNotFoundException;
 import main.java.service.DevisService;
+import main.java.service.ProjectService;
 import main.java.utils.DateFormat;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Scanner;
 
@@ -13,9 +16,11 @@ public class DevisMenu {
 
     private Scanner scanner;
     private DevisService devisService;
+    private ProjectService projectService;
 
-    public DevisMenu(DevisService devisService) {
+    public DevisMenu(DevisService devisService , ProjectService projectService) {
         this.devisService = devisService;
+        this.projectService = projectService;
         this.scanner = new Scanner(System.in);
     }
 
@@ -54,11 +59,18 @@ public class DevisMenu {
         }
     }
 
+
+
     private void saveDevis() {
-        System.out.print("Enter Project ID: ");
-        int projectId = scanner.nextInt();
-        scanner.nextLine();
-        Project project = new Project();
+        System.out.print("Enter Project Name: ");
+        String projectName = scanner.nextLine();
+        Project project = null;
+        try{
+             project = projectService.findProjectByName(projectName);
+        }catch (ProjectNotFoundException projectNotFoundException){
+            System.out.println(projectNotFoundException.getMessage());
+            return;
+        }
 
         System.out.print("Enter estimated amount: ");
         double estimatedAmount = scanner.nextDouble();
@@ -75,6 +87,7 @@ public class DevisMenu {
         Devis devis = new Devis(0L, estimatedAmount, issueDateParse, validatedDateParse, false, project);
         devisService.save(devis);
     }
+
 
     private void deleteDevis() {
         System.out.print("Enter Devis ID: ");
