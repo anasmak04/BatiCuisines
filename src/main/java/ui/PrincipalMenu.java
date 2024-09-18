@@ -23,8 +23,8 @@ public class PrincipalMenu {
             System.out.println("1. Create a new project");
             System.out.println("2. Display existing projects");
             System.out.println("3. Calculate project cost");
-            System.out.println("3. Devis Menu");
-            System.out.println("4. Quit");
+            System.out.println("4. Devis Menu");
+            System.out.println("5. Quit");
             System.out.print("Please select an option: ");
 
             int choice = scanner.nextInt();
@@ -61,9 +61,10 @@ public class PrincipalMenu {
         this.projectMenu.findAll();
     }
 
-    public void devisMenu(){
+    public void devisMenu() {
         this.devisMenu.displayMenu();
     }
+
     public void totalCost() {
 
     }
