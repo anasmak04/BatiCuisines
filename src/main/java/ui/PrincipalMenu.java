@@ -6,9 +6,11 @@ public class PrincipalMenu {
 
     private final ProjectMenu projectMenu;
     private static Scanner scanner;
+    private final DevisMenu devisMenu;
 
-    public PrincipalMenu(ProjectMenu projectMenu) {
+    public PrincipalMenu(ProjectMenu projectMenu, DevisMenu devisMenu) {
         this.projectMenu = projectMenu;
+        this.devisMenu = devisMenu;
         scanner = new Scanner(System.in);
     }
 
@@ -21,6 +23,7 @@ public class PrincipalMenu {
             System.out.println("1. Create a new project");
             System.out.println("2. Display existing projects");
             System.out.println("3. Calculate project cost");
+            System.out.println("3. Devis Menu");
             System.out.println("4. Quit");
             System.out.print("Please select an option: ");
 
@@ -37,6 +40,9 @@ public class PrincipalMenu {
                     totalCost();
                     break;
                 case 4:
+                    devisMenu();
+                    break;
+                case 5:
                     check = false;
                     break;
                 default:
@@ -55,6 +61,9 @@ public class PrincipalMenu {
         this.projectMenu.findAll();
     }
 
+    public void devisMenu(){
+        this.devisMenu.displayMenu();
+    }
     public void totalCost() {
 
     }

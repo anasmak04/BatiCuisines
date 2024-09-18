@@ -44,16 +44,16 @@ public class ClientRepository implements ClientInterface {
     @Override
     public Optional<Client> findById(Long id) {
         String query = "SELECT * FROM clients WHERE id = ?";
-        try(PreparedStatement preparedStatement = connection.prepareStatement("sql")) {
+        try (PreparedStatement preparedStatement = connection.prepareStatement("sql")) {
             preparedStatement.setLong(1, id);
             ResultSet resultSet = preparedStatement.executeQuery();
             Client client = new Client();
             if (resultSet.next()) {
                 client.setId(resultSet.getLong("id"));
-               client.setName(resultSet.getString("name"));
-               client.setAddress(resultSet.getString("address"));
-               client.setPhone(resultSet.getString("phone"));
-               client.setProfessional(resultSet.getBoolean("isProfessional"));
+                client.setName(resultSet.getString("name"));
+                client.setAddress(resultSet.getString("address"));
+                client.setPhone(resultSet.getString("phone"));
+                client.setProfessional(resultSet.getBoolean("isProfessional"));
             }
             return Optional.of(client);
         } catch (SQLException e) {

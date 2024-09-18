@@ -49,55 +49,6 @@ public class ProjectRepository implements ProjectInterface {
     }
 
 
-//    @Override
-//    public void saveProjectWithDetails(Client client, Project project, Material material, WorkForce workForce) {
-//        try {
-//            connection.setAutoCommit(false);
-//
-//            Client savedClient = clientRepository.save(client);
-//            project.setClient(savedClient);
-//
-//            Project savedProject = save(project);
-//
-//            Component materialComponent = new Component();
-//            materialComponent.setName(material.getName());
-//            materialComponent.setComponentType("Material");
-//            materialComponent.setVatRate(material.getVatRate());
-//            materialComponent.setProject(savedProject);
-//
-//            Component savedMaterialComponent = componentRepository.save(materialComponent);
-//
-//            material.setComponent(savedMaterialComponent);
-//            materialRepository.save(material);
-//
-//            Component workforceComponent = new Component();
-//            workforceComponent.setName(workForce.getName());
-//            workforceComponent.setComponentType("Workforce");
-//            workforceComponent.setVatRate(workForce.getVatRate());
-//            workforceComponent.setProject(savedProject);
-//
-//            Component savedWorkforceComponent = componentRepository.save(workforceComponent);
-//
-//
-//            workForce.setComponent(savedWorkforceComponent);
-//            workForceRepository.save(workForce);
-//
-//            connection.commit();
-//        } catch (SQLException e) {
-//            try {
-//                connection.rollback();
-//            } catch (SQLException rollbackEx) {
-//                System.out.println("Error during transaction rollback: " + rollbackEx.getMessage());
-//            }
-//            System.out.println("Error saving client and project: " + e.getMessage());
-//        } finally {
-//            try {
-//                connection.setAutoCommit(true);
-//            } catch (SQLException e) {
-//                System.out.println("Error resetting auto-commit: " + e.getMessage());
-//            }
-//        }
-//    }
 
 
     @Override
@@ -296,5 +247,27 @@ public class ProjectRepository implements ProjectInterface {
             System.out.println(sqlException.getMessage());
         }
         return false;
+    }
+
+    @Override
+    public Project findProjectByName(String name) {
+        String sql = "SELECT id , projectName FROM projects WHERE projectName = ?";
+            Project project = new Project();
+        try(PreparedStatement preparedStatement = connection.prepareStatement(sql)){
+            preparedStatement.setString(1, name);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            if(resultSet.next()){
+                Long id = resultSet.getLong("id");
+                project.setId(id);
+                project.setProjectName(resultSet.getString("projectName"));
+            }else{
+                throw new ProjectNotFoundException("Project not found");
+            }
+
+        }catch (SQLException sqlException){
+            System.out.println(sqlException.getMessage());
+        }
+
+        return project;
     }
 }

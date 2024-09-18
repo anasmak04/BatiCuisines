@@ -100,7 +100,6 @@ public class ProjectMenu {
 
             savedProject.addComponent(savedMaterial.getComponent());
             savedProject.addComponent(savedWorkForce.getComponent());
-            projectService.save(savedProject);
 
         } catch (Exception e) {
             System.out.println("An error occurred while adding the project: " + e.getMessage());

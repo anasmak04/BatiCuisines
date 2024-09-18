@@ -7,7 +7,7 @@ import main.java.utils.Validations;
 import java.util.List;
 import java.util.Optional;
 
-public class ClientService  {
+public class ClientService {
 
     private final ClientRepository clientRepository;
 

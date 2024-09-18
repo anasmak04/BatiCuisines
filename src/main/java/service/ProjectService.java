@@ -38,8 +38,8 @@ public class ProjectService  {
         return this.projectRepository.findById(id);
     }
 
-//    public void saveProjectWithDetails(Client client, Project project, Material material, WorkForce workForce) {
-//        this.projectRepository.saveProjectWithDetails(client, project,material, workForce);
-//    }
+    public Project findProjectByName(String name) {
+       return projectRepository.findProjectByName(name);
+    }
 
 }
