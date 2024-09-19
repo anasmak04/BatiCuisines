@@ -85,14 +85,11 @@ public class ProjectMenu {
             System.out.println("\n--- Add a New Project ---");
             System.out.print("Enter the name of the project: ");
             String name = scanner.nextLine();
-            System.out.print("Enter project status (INPROGRESS - FINISHED - CANCELLED): ");
-            String status = scanner.nextLine();
-            ProjectStatus projectStatus = ProjectStatus.valueOf(status.toUpperCase());
             System.out.print("Enter the surface area for the project: ");
             double surface = scanner.nextDouble();
             scanner.nextLine();
 
-            Project project = new Project(0L, name, 0, 0, projectStatus.name(), surface, selectedClient);
+            Project project = new Project(0L, name, 0, 0, ProjectStatus.INPROGRESS.name(), surface, selectedClient);
             Project savedProject = projectService.save(project);
 
             Material savedMaterial = materialMenu.addMaterial(savedProject);
@@ -105,7 +102,6 @@ public class ProjectMenu {
             System.out.println("An error occurred while adding the project: " + e.getMessage());
         }
     }
-
 
 
     public void findAll() {

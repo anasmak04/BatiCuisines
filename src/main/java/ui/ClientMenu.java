@@ -1,5 +1,6 @@
 package main.java.ui;
 
+import main.java.annotation.Fields;
 import main.java.domain.entities.Client;
 import main.java.exception.ClientNotFoundException;
 import main.java.service.ClientService;

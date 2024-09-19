@@ -7,6 +7,7 @@ import main.java.domain.entities.Project;
 import main.java.repository.interfaces.DevisInterface;
 
 import java.sql.*;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -20,12 +21,13 @@ public class DevisRepository implements DevisInterface {
 
     @Override
     public Devis save(Devis devis) {
-        String query = "INSERT INTO quotes (estimatedAmount, issueDate, isAccepted, project_id) VALUES (?, ?, ?, ?) RETURNING id";
+        String query = "INSERT INTO quotes (estimatedAmount, issueDate,validatedDate, isAccepted, project_id) VALUES (?, ?,?, ?, ?) RETURNING id";
         try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
             preparedStatement.setDouble(1, devis.getEstimatedAmount());
             preparedStatement.setDate(2, java.sql.Date.valueOf(devis.getIssueDate()));
-            preparedStatement.setBoolean(3, devis.isAccepted());
-            preparedStatement.setLong(4, devis.getProject().getId());
+            preparedStatement.setDate(3, java.sql.Date.valueOf(devis.getValidatedDate()));
+            preparedStatement.setBoolean(4, devis.isAccepted());
+            preparedStatement.setLong(5, devis.getProject().getId());
 
             try (ResultSet generatedKeys = preparedStatement.executeQuery()) {
                 if (generatedKeys.next()) {
@@ -44,8 +46,8 @@ public class DevisRepository implements DevisInterface {
 
     @Override
     public Optional<Devis> findById(Long id) {
-        String query = "SELECT q.id, q.estimatedAmount, q.issueDate, q.isAccepted, q.project_id, " +
-                "p.projectName, p.profitMargin, p.totalCost, p.status, " +
+        String query = "SELECT q.id, q.estimatedAmount, q.issueDate,q.validatedDate ,q.isAccepted, q.project_id, " +
+                "p.projectName, p.profitMargin, p.surface ,p.totalCost, p.status, " +
                 "c.id AS client_id, c.name, c.address, c.phone, c.isProfessional " +
                 "FROM quotes q " +
                 "JOIN projects p ON q.project_id = p.id " +
@@ -79,7 +81,7 @@ public class DevisRepository implements DevisInterface {
                             resultSet.getLong("id"),
                             resultSet.getDouble("estimatedAmount"),
                             resultSet.getDate("issueDate").toLocalDate(),
-                            resultSet.getDate("validatedDate").toLocalDate(),
+                            resultSet.getDate("validatedDate") != null ? resultSet.getDate("validatedDate").toLocalDate() : null,
                             resultSet.getBoolean("isAccepted"),
                             project
                     );
@@ -95,12 +97,13 @@ public class DevisRepository implements DevisInterface {
 
     @Override
     public List<Devis> findAll() {
-        String query = "SELECT q.id, q.estimatedAmount, q.issueDate, q.isAccepted, q.project_id, " +
-                "p.projectName, p.profitMargin, p.totalCost, p.status, " +
+        String query = "SELECT q.id, q.estimatedAmount, q.issueDate, q.validatedDate ,q.isAccepted, q.project_id, " +
+                "p.projectName, p.profitMargin,p.surface ,p.totalCost, p.status," +
                 "c.id AS client_id, c.name, c.address, c.phone, c.isProfessional " +
                 "FROM quotes q " +
                 "JOIN projects p ON q.project_id = p.id " +
                 "JOIN clients c ON p.client_id = c.id";
+
         List<Devis> devisList = new ArrayList<>();
         try (PreparedStatement preparedStatement = connection.prepareStatement(query);
              ResultSet resultSet = preparedStatement.executeQuery()) {
@@ -127,7 +130,7 @@ public class DevisRepository implements DevisInterface {
                         resultSet.getLong("id"),
                         resultSet.getDouble("estimatedAmount"),
                         resultSet.getDate("issueDate").toLocalDate(),
-                        resultSet.getDate("validatedDate").toLocalDate(),
+                        resultSet.getDate("validatedDate") != null ? resultSet.getDate("validatedDate").toLocalDate() : null,
                         resultSet.getBoolean("isAccepted"),
                         project
                 );
