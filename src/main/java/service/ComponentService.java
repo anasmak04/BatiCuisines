@@ -1,17 +1,15 @@
 package main.java.service;
 
 import main.java.domain.entities.Component;
-import main.java.domain.entities.Material;
 import main.java.repository.ComponentRepository;
-import main.java.repository.interfaces.ComponentInterface;
-import main.java.repository.interfaces.MaterialInterface;
 
 import java.util.List;
 import java.util.Optional;
 
-public class ComponentService   {
+public class ComponentService {
 
     private final ComponentRepository componentRepository;
+
     public ComponentService(ComponentRepository componentRepository) {
         this.componentRepository = componentRepository;
     }
@@ -22,22 +20,22 @@ public class ComponentService   {
 
 
     public Optional<Component> findById(Long id) {
-        return Optional.empty();
+        return componentRepository.findById(id);
     }
 
 
     public List<Component> findAll() {
-        return List.of();
+        return componentRepository.findAll();
     }
 
 
     public Component update(Component component) {
-        return null;
+        return componentRepository.update(component);
     }
 
 
-    public boolean delete(int id) {
-        return false;
+    public boolean delete(Long id) {
+        return componentRepository.delete(id);
     }
 
 

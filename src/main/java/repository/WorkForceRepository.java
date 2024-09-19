@@ -3,6 +3,7 @@ package main.java.repository;
 
 import main.java.config.DatabaseConnection;
 import main.java.domain.entities.Component;
+import main.java.domain.entities.Project;
 import main.java.domain.entities.WorkForce;
 import main.java.repository.interfaces.WorkForceInterface;
 
@@ -14,7 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class WorkForceRepository implements WorkForceInterface<WorkForce> {
+public class WorkForceRepository implements WorkForceInterface {
 
     private Connection connection;
     private ComponentRepository componentRepository;
@@ -88,4 +89,45 @@ public class WorkForceRepository implements WorkForceInterface<WorkForce> {
     public boolean delete(Long id) {
         return false;
     }
+
+    @Override
+    public List<WorkForce> findAllByProjectId(Long projectId) {
+        List<WorkForce> workforces = new ArrayList<>();
+        String sql = "SELECT l.id, l.hourlyRate, l.workHours, l.workerProductivity, " +
+                "c.id AS component_id, c.name AS component_name, c.vatRate, c.project_id " +
+                "FROM labor l " +
+                "JOIN components c ON l.component_id = c.id " +
+                "WHERE c.project_id = ?";
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+            preparedStatement.setLong(1, projectId);
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            while (resultSet.next()) {
+                Component component = new Component();
+                component.setId(resultSet.getLong("component_id"));
+                component.setName(resultSet.getString("component_name"));
+                component.setVatRate(resultSet.getDouble("vatRate"));
+
+                Project project = new Project();
+                project.setId(resultSet.getLong("project_id"));
+
+                WorkForce workForce = new WorkForce();
+                workForce.setId(resultSet.getLong("id"));
+
+                workForce.setHourlyCost(resultSet.getDouble("hourlyRate"));
+                workForce.setWorkingHours(resultSet.getDouble("workHours"));
+                workForce.setWorkerProductivity(resultSet.getDouble("workerProductivity"));
+                component.setProject(project);
+                workForce.setComponent(component);
+
+                workforces.add(workForce);
+            }
+        } catch (SQLException sqlException) {
+            System.out.println("Error finding all work forces: " + sqlException.getMessage());
+        }
+
+        return workforces;
+    }
+
+
 }

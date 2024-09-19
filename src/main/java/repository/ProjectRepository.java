@@ -10,16 +10,8 @@ import java.util.*;
 
 public class ProjectRepository implements ProjectInterface {
     private final Connection connection;
-    private final ClientRepository clientRepository;
-    private final ComponentRepository componentRepository;
-    private final MaterialRepository materialRepository;
-    private final WorkForceRepository workForceRepository;
 
-    public ProjectRepository(ClientRepository clientRepository, ComponentRepository componentRepository, MaterialRepository materialRepository, WorkForceRepository workForceRepository) {
-        this.clientRepository = clientRepository;
-        this.componentRepository = componentRepository;
-        this.materialRepository = materialRepository;
-        this.workForceRepository = workForceRepository;
+    public ProjectRepository() {
         this.connection = DatabaseConnection.getConnection();
     }
 
@@ -47,8 +39,6 @@ public class ProjectRepository implements ProjectInterface {
             return null;
         }
     }
-
-
 
 
     @Override
@@ -229,21 +219,20 @@ public class ProjectRepository implements ProjectInterface {
         return false;
     }
 
-    @Override
+
     public boolean updateFields(Long projectId, double marginProfit, double totalCost) {
         String sql = "UPDATE projects SET profitMargin ? , totalCost = ? WHERE id = ?";
-        try(PreparedStatement preparedStatement = connection.prepareStatement(sql)){
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
             preparedStatement.setDouble(1, marginProfit);
             preparedStatement.setDouble(2, totalCost);
             preparedStatement.setLong(3, projectId);
             int result = preparedStatement.executeUpdate();
             if (result == 1) {
                 System.out.println("Project updated successfully");
-            }
-            else{
+            } else {
                 System.out.println("Update failed, project not found");
             }
-        }catch (SQLException sqlException){
+        } catch (SQLException sqlException) {
             System.out.println(sqlException.getMessage());
         }
         return false;
@@ -252,22 +241,40 @@ public class ProjectRepository implements ProjectInterface {
     @Override
     public Project findProjectByName(String name) {
         String sql = "SELECT id , projectName FROM projects WHERE projectName = ?";
-            Project project = new Project();
-        try(PreparedStatement preparedStatement = connection.prepareStatement(sql)){
+        Project project = new Project();
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
             preparedStatement.setString(1, name);
             ResultSet resultSet = preparedStatement.executeQuery();
-            if(resultSet.next()){
+            if (resultSet.next()) {
                 Long id = resultSet.getLong("id");
                 project.setId(id);
                 project.setProjectName(resultSet.getString("projectName"));
-            }else{
+            } else {
                 throw new ProjectNotFoundException("Project not found");
             }
 
-        }catch (SQLException sqlException){
+        } catch (SQLException sqlException) {
             System.out.println(sqlException.getMessage());
         }
 
         return project;
+    }
+
+    @Override
+    public void updateProjectFields(Long projctId, double marginProfit, double totalCost) {
+        String sql = "UPDATE projects SET profitMargin =? , totalCost = ? WHERE id = ?";
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+            preparedStatement.setDouble(1, marginProfit);
+            preparedStatement.setDouble(2, totalCost);
+            preparedStatement.setLong(3, projctId);
+            int result = preparedStatement.executeUpdate();
+            if (result == 1) {
+                System.out.println("Project updated successfully");
+            } else {
+                System.out.println("Update failed, project not found");
+            }
+        } catch (SQLException sqlException) {
+            System.out.println(sqlException.getMessage());
+        }
     }
 }

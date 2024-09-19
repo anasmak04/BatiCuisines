@@ -21,6 +21,7 @@ public class Client {
         projects = new ArrayList<>();
     }
 
+
     public Client() {
         projects = new ArrayList<>();
     }

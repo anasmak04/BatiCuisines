@@ -2,23 +2,9 @@ package main.java.repository.interfaces;
 
 import main.java.domain.entities.Devis;
 
-import java.util.List;
 import java.util.Optional;
 
 public interface DevisInterface extends CrudInterface<Devis> {
-
-    @Override
-    public Devis save(Devis devis);
-
-    @Override
-    public Optional<Devis> findById(Long id);
-
-    @Override
-    public List<Devis> findAll();
-
-    @Override
-    public Devis update(Devis entity);
-
-    @Override
-    public boolean delete(Long id);
+    public void updateAmount(Long devisId , double amount);
+    public Optional<Devis> findDevisByProjectId(Long projectId);
 }

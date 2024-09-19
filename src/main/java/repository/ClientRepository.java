@@ -44,7 +44,7 @@ public class ClientRepository implements ClientInterface {
     @Override
     public Optional<Client> findById(Long id) {
         String query = "SELECT * FROM clients WHERE id = ?";
-        try (PreparedStatement preparedStatement = connection.prepareStatement("sql")) {
+        try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
             preparedStatement.setLong(1, id);
             ResultSet resultSet = preparedStatement.executeQuery();
             Client client = new Client();
@@ -132,7 +132,7 @@ public class ClientRepository implements ClientInterface {
                 return Optional.of(mapResultSetToClient(rs));
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+        System.out.println(e.getMessage());
         }
         return Optional.empty();
     }

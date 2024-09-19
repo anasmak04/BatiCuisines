@@ -1,5 +1,7 @@
 package main.java.ui;
 
+import main.java.domain.entities.Client;
+
 import java.util.Scanner;
 
 public class PrincipalMenu {
@@ -7,10 +9,14 @@ public class PrincipalMenu {
     private final ProjectMenu projectMenu;
     private static Scanner scanner;
     private final DevisMenu devisMenu;
+    private final ClientMenu  clientMenu;
+    private CostCalculationMenu costCalculationMenu;
 
-    public PrincipalMenu(ProjectMenu projectMenu, DevisMenu devisMenu) {
+    public PrincipalMenu(ProjectMenu projectMenu, DevisMenu devisMenu, ClientMenu clientMenu, CostCalculationMenu costCalculationMenu) {
         this.projectMenu = projectMenu;
         this.devisMenu = devisMenu;
+        this.clientMenu = clientMenu;
+        this.costCalculationMenu = costCalculationMenu;
         scanner = new Scanner(System.in);
     }
 
@@ -24,7 +30,8 @@ public class PrincipalMenu {
             System.out.println("2. Display existing projects");
             System.out.println("3. Calculate project cost");
             System.out.println("4. Devis Menu");
-            System.out.println("5. Quit");
+            System.out.println("5. Client Menu");
+            System.out.println("6. Quit");
             System.out.print("Please select an option: ");
 
             int choice = scanner.nextInt();
@@ -43,6 +50,9 @@ public class PrincipalMenu {
                     devisMenu();
                     break;
                 case 5:
+                    devisMenu();
+                    break;
+                case 6:
                     check = false;
                     break;
                 default:
@@ -65,8 +75,12 @@ public class PrincipalMenu {
         this.devisMenu.displayMenu();
     }
 
-    public void totalCost() {
+    public void clientMenu(){
+        this.clientMenu.clientMenu();
+    }
 
+    public void totalCost() {
+        costCalculationMenu.save();
     }
 
 }

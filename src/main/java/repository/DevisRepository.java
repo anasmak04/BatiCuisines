@@ -7,7 +7,6 @@ import main.java.domain.entities.Project;
 import main.java.repository.interfaces.DevisInterface;
 
 import java.sql.*;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -178,4 +177,51 @@ public class DevisRepository implements DevisInterface {
         }
         return false;
     }
+
+    @Override
+    public void updateAmount(Long projectId, double amount) {
+        String sql = "UPDATE quotes SET estimatedAmount = ? WHERE project_id = ?";
+
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+            preparedStatement.setDouble(1, amount);
+            preparedStatement.setLong(2, projectId);
+            int result = preparedStatement.executeUpdate();
+            if (result == 1) {
+                System.out.println("Devis updated successfully");
+            } else {
+                System.out.println("Update failed, no rows affected.");
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    @Override
+    public Optional<Devis> findDevisByProjectId(Long projectId) {
+        String sql = "SELECT id, estimatedamount, issuedate, validateddate, isaccepted " +
+                "FROM quotes WHERE project_id = ?";
+
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+            preparedStatement.setLong(1, projectId);
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            if (resultSet.next()) {
+                Devis devis = new Devis();
+                devis.setId(resultSet.getLong("id"));
+                devis.setEstimatedAmount(resultSet.getDouble("estimatedamount"));
+                devis.setIssueDate(resultSet.getDate("issuedate").toLocalDate());
+                devis.setValidatedDate(resultSet.getDate("validateddate") != null ? resultSet.getDate("validateddate").toLocalDate() : null);
+                devis.setAccepted(resultSet.getBoolean("isaccepted"));
+
+                // Since you're only fetching the quote, no need to set a project.
+                return Optional.of(devis);
+            }
+        } catch (SQLException sqlException) {
+            System.out.println(sqlException.getMessage());
+        }
+
+        return Optional.empty();
+    }
+
+
 }

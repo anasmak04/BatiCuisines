@@ -3,6 +3,7 @@ package main.java.repository;
 import main.java.config.DatabaseConnection;
 import main.java.domain.entities.Component;
 import main.java.domain.entities.Material;
+import main.java.domain.entities.Project;
 import main.java.exception.MaterialNotFoundException;
 import main.java.repository.interfaces.MaterialInterface;
 
@@ -14,7 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class MaterialRepository implements MaterialInterface<Material> {
+public class MaterialRepository implements MaterialInterface {
     private Connection connection;
     private final ComponentRepository componentRepository;
 
@@ -161,4 +162,47 @@ public class MaterialRepository implements MaterialInterface<Material> {
         }
         return false;
     }
+
+    @Override
+    public List<Material> findAllByProjectId(Long projectId) {
+        List<Material> materials = new ArrayList<>();
+        String sql = "SELECT m.id, m.unitCost, m.quantity, m.transportCost, m.qualityCoefficient, " +
+                "c.id AS component_id, c.name AS component_name, c.vatRate, c.project_id " +
+                "FROM materials m " +
+                "JOIN components c ON m.component_id = c.id " +
+                "WHERE c.project_id = ?";
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setLong(1, projectId);
+            ResultSet resultSet = statement.executeQuery();
+
+            while (resultSet.next()) {
+                Component component = new Component();
+                component.setId(resultSet.getLong("component_id"));
+                component.setName(resultSet.getString("component_name"));
+                component.setVatRate(resultSet.getDouble("vatRate"));
+
+                Project project = new Project();
+                project.setId(resultSet.getLong("project_id"));
+
+                Material material = new Material();
+                material.setId(resultSet.getLong("id"));
+                material.setUnitCost(resultSet.getDouble("unitCost"));
+                material.setQuantity(resultSet.getDouble("quantity"));
+                material.setTransportCost(resultSet.getDouble("transportCost"));
+                material.setCoefficientQuality(resultSet.getDouble("qualityCoefficient"));
+
+                component.setProject(project);
+                material.setComponent(component);
+
+                materials.add(material);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            System.out.println(e.getMessage());
+        }
+
+        return materials;
+    }
+
+
 }
