@@ -22,7 +22,7 @@ public class Main {
         WorkForceService workForceService = new WorkForceService(workForceRepository);
         WorkForceMenu workForceMenu = new WorkForceMenu(workForceService,componentService);
         ProjectMenu projectMenu = new ProjectMenu(projectService,clientMenu,materialMenu, workForceMenu);
-        PrincipalMenu principalMenu = new PrincipalMenu(projectMenu,devisMenu);
+        PrincipalMenu principalMenu = new PrincipalMenu(projectMenu,devisMenu,clientMenu);
         principalMenu.Menu();
     }
 }

@@ -18,6 +18,49 @@ public class ClientMenu {
     }
 
 
+    public void clientMenu() {
+        int choice;
+
+        do {
+            System.out.println("\n--- Client Management Menu ---");
+            System.out.println("1. Save new client");
+            System.out.println("2. Find all clients");
+            System.out.println("3. Find client by ID");
+            System.out.println("4. Update client");
+            System.out.println("5. Delete client");
+            System.out.println("6. Exit");
+
+            System.out.print("Enter your choice: ");
+            choice = scanner.nextInt();
+
+            switch (choice) {
+                case 1:
+                    addNewClient();
+                    break;
+                case 2:
+                    findAll();
+                    break;
+                case 3:
+                    findById();
+                    break;
+                case 4:
+                    update();
+                    break;
+                case 5:
+                    delete();
+                    break;
+                case 6:
+                    System.out.println("Exiting client menu...");
+                    break;
+                default:
+                    System.out.println("Invalid choice. Please try again.");
+                    break;
+            }
+        } while (choice != 6);
+    }
+
+
+
     public Client searchByName(String name) {
         Optional<Client> optionalClient = this.clientService.findByName(name);
         if (optionalClient.isPresent()) {
@@ -82,12 +125,12 @@ public class ClientMenu {
 
     }
 
+
     public void update() {
         System.out.println("\n--- Update client ---");
         System.out.print("Enter the Id  : ");
         Long id = scanner.nextLong();
-        Optional<Client> clientOpt = clientService.findById(id);
-
+        Client clientOpt = clientService.findById(id).orElseThrow(() -> new ClientNotFoundException("Client Not Found"));
         System.out.print("Enter new name: ");
         String name = scanner.nextLine();
         System.out.print("Enter new address: ");
