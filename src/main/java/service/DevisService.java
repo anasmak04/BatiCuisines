@@ -33,4 +33,12 @@ public class DevisService {
         return this.devisRepository.findAll();
     }
 
+    public void updateAmountDevis(Long devisId, double amount) {
+        this.devisRepository.updateAmount(devisId, amount);
+    }
+
+    public Optional<Devis> findDevisByproject(Long projectId){
+      return   this.devisRepository.findDevisByProjectId(projectId);
+    }
+
 }

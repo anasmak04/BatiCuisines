@@ -3,7 +3,7 @@ package main.java.domain.entities;
 import java.util.ArrayList;
 import java.util.List;
 
-public  class Component {
+public class Component {
     private Long id;
     private String name;
     private String componentType;
@@ -20,7 +20,7 @@ public  class Component {
         this.project = project;
     }
 
-    public Component(){
+    public Component() {
 
     }
 
@@ -80,11 +80,11 @@ public  class Component {
         this.workForces = workForces;
     }
 
-    public void addMaterial(Material material){
+    public void addMaterial(Material material) {
         this.materials.add(material);
     }
 
-    public void addWorkForce(WorkForce workForce){
+    public void addWorkForce(WorkForce workForce) {
         this.workForces.add(workForce);
     }
 }

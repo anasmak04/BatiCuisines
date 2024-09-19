@@ -19,11 +19,12 @@ public class Devis {
         this.project = project;
     }
 
-    public Devis(Long id){
+    public Devis(Long id) {
         this.id = id;
     }
 
-    public Devis() {}
+    public Devis() {
+    }
 
     public Long getId() {
         return id;

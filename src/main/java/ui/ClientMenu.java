@@ -148,7 +148,12 @@ public class ClientMenu {
         System.out.println("\n--- Delete client ---");
         System.out.print("Enter id: ");
         Long id = scanner.nextLong();
-        clientService.delete(id);
+        boolean client = clientService.delete(id);
+        if (client){
+            System.out.println("Client deleted!");
+        }else{
+            System.out.println("Client not found");
+        }
     }
 
     public void findAll() {

@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class ComponentRepository implements ComponentInterface<Component> {
+public class ComponentRepository implements ComponentInterface {
     private Connection connection;
 
     public ComponentRepository() {
@@ -173,20 +173,17 @@ public class ComponentRepository implements ComponentInterface<Component> {
     }
 
     @Override
-    public void updateFieldsComponent(Long componentId, double vta) {
-        String sql = "UPDATE components SET vatRate ?  WHERE id = ?";
+    public double findVatRateForComponent(Long id) {
+        String sql = "SELECT vatRate FROM components WHERE id = ?";
         try(PreparedStatement preparedStatement = connection.prepareStatement(sql)){
-            preparedStatement.setDouble(1, vta);
-            preparedStatement.setLong(2, componentId);
-            int result = preparedStatement.executeUpdate();
-            if (result == 1) {
-                System.out.println("component updated successfully");
+            preparedStatement.setLong(1, id);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            if(resultSet.next()) {
+                return resultSet.getDouble("vatRate");
             }
-            else{
-                System.out.println("Update failed, project not found");
-            }
-        }catch (SQLException sqlException){
+        }catch (SQLException sqlException) {
             System.out.println(sqlException.getMessage());
         }
+        return 0.0;
     }
 }

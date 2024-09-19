@@ -1,18 +1,20 @@
 package main.java.service;
 
 import main.java.domain.entities.Material;
+import main.java.repository.ComponentRepository;
 import main.java.repository.MaterialRepository;
-import main.java.repository.interfaces.MaterialInterface;
 
 import java.util.List;
 import java.util.Optional;
 
-public class MaterialService  {
+public class MaterialService {
 
     private final MaterialRepository materialRepository;
+    private ComponentRepository componentRepository;
 
-    public MaterialService(MaterialRepository materialRepository) {
+    public MaterialService(MaterialRepository materialRepository, ComponentRepository componentRepository) {
         this.materialRepository = materialRepository;
+        this.componentRepository = componentRepository;
     }
 
     public Material save(Material material) {
@@ -37,5 +39,32 @@ public class MaterialService  {
 
     public boolean delete(Long id) {
         return materialRepository.delete(id);
+    }
+
+    public List<Material> findAllByProjectId(Long projectId) {
+        return materialRepository.findAllByProjectId(projectId);
+    }
+    private double getVatRateForMaterial(Material material) {
+        return componentRepository.findVatRateForComponent(material.getComponent().getId());
+    }
+
+
+    public double calculateMaterial(Material material) {
+        double total = material.getUnitCost() * material.getQuantity() * material.getCoefficientQuality();
+        return total + material.getTransportCost();
+    }
+
+    public double calculateMaterialAfterVatRate(Material material) {
+        return calculateMaterial(material);
+    }
+
+    private double applyVat(double cost, double vatRate) {
+        return cost + (cost * vatRate / 100);
+    }
+
+    public double calculateMaterialBeforeVatRate(Material material) {
+        double costBeforeVat = calculateMaterial(material);
+        double vatRate = getVatRateForMaterial(material);
+        return applyVat(costBeforeVat, vatRate);
     }
 }

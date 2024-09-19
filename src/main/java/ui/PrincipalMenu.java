@@ -1,5 +1,7 @@
 package main.java.ui;
 
+import main.java.domain.entities.Client;
+
 import java.util.Scanner;
 
 public class PrincipalMenu {
@@ -8,10 +10,13 @@ public class PrincipalMenu {
     private static Scanner scanner;
     private final DevisMenu devisMenu;
     private final ClientMenu  clientMenu;
-    public PrincipalMenu(ProjectMenu projectMenu, DevisMenu devisMenu, ClientMenu clientMenu) {
+    private CostCalculationMenu costCalculationMenu;
+
+    public PrincipalMenu(ProjectMenu projectMenu, DevisMenu devisMenu, ClientMenu clientMenu, CostCalculationMenu costCalculationMenu) {
         this.projectMenu = projectMenu;
         this.devisMenu = devisMenu;
         this.clientMenu = clientMenu;
+        this.costCalculationMenu = costCalculationMenu;
         scanner = new Scanner(System.in);
     }
 
@@ -75,7 +80,7 @@ public class PrincipalMenu {
     }
 
     public void totalCost() {
-
+        costCalculationMenu.save();
     }
 
 }

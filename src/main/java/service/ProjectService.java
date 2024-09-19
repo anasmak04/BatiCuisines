@@ -1,9 +1,7 @@
 package main.java.service;
 
-import main.java.domain.entities.Client;
-import main.java.domain.entities.Material;
+
 import main.java.domain.entities.Project;
-import main.java.domain.entities.WorkForce;
 import main.java.repository.*;
 import main.java.utils.Validations;
 
@@ -40,6 +38,10 @@ public class ProjectService  {
 
     public Project findProjectByName(String name) {
        return projectRepository.findProjectByName(name);
+    }
+
+    public void updateProjectFields(Long projectId , double profitMargin , double totalCost){
+        projectRepository.updateProjectFields(projectId, profitMargin , totalCost);
     }
 
 }
