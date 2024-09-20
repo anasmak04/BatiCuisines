@@ -1,16 +1,20 @@
 package main.java.ui;
 
 
+import main.java.domain.entities.Devis;
 import main.java.domain.entities.Material;
 import main.java.domain.entities.Project;
 import main.java.domain.entities.WorkForce;
+import main.java.domain.enums.ProjectStatus;
 import main.java.exception.DevisNotFoundException;
 import main.java.repository.ComponentRepository;
 import main.java.repository.ProjectRepository;
 import main.java.service.DevisService;
 import main.java.service.MaterialService;
 import main.java.service.WorkForceService;
+import main.java.utils.DateFormat;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Scanner;
 
@@ -22,6 +26,7 @@ public class CostCalculationMenu {
     private final WorkForceService workForceService;
     private final DevisService devisService;
     private final DevisMenu devisMenu;
+    private final double discount = 0.7;
 
     public CostCalculationMenu(ProjectRepository projectRepository, ComponentRepository componentRepository,
                                MaterialService materialService, WorkForceService workForceService, DevisService devisService, DevisMenu devisMenu) {
@@ -83,13 +88,14 @@ public class CostCalculationMenu {
         if (getYesNoInput("Do you want to apply a profit margin to the project? (y/n): ")) {
             System.out.print("Enter profit margin percentage: ");
             marginRate = scanner.nextDouble();
+            scanner.nextLine();
             project.setProfitMargin(marginRate);
             double profitMargin = totalCost * marginRate / 100;
             totalCost += profitMargin;
         }
 
+
         projectRepository.updateProjectFields(projectId, project.getProfitMargin(), totalCost);
-        devisService.updateAmountDevis(projectId, totalCost);
 
 
         System.out.println("\n--- Calculation Result ---");
@@ -103,7 +109,44 @@ public class CostCalculationMenu {
         System.out.println("Workforce Cost Before VAT: " + String.format("%.2f", totalWorkforceBeforeVat) + " €");
         System.out.println("Workforce Cost After VAT: " + String.format("%.2f", totalWorkforceAfterVat) + " €");
         System.out.println("Total Cost Before Margin: " + String.format("%.2f", totalCostBeforeMargin) + " €");
-        System.out.println("id __>" + projectId);
+
+
+        if (project.getClient().isProfessional()) {
+            System.out.println("\n--- Professional Client Discount Applied ---");
+            totalCost *= discount;
+            System.out.println("Discounted Total Cost: " + String.format("%.2f", totalCost) + " €");
+        }
+
+
+        System.out.print("Enter issue date (yyyy-MM-dd): ");
+        String issueDate = scanner.nextLine();
+        LocalDate issueDateParse = DateFormat.parseDate(issueDate);
+        System.out.print("Enter validated date (yyyy-MM-dd): ");
+        String validatedDate = scanner.nextLine();
+        LocalDate validatedDateParse = DateFormat.parseDate(validatedDate);
+        Devis devis = new Devis(0L, totalCost, issueDateParse, validatedDateParse, false, project);
+        devisService.save(devis);
+
+
+        System.out.print("Do you want to accept the devis? (Yes/No): ");
+        String choice = scanner.nextLine().trim().toLowerCase();
+
+        switch (choice) {
+            case "yes":
+            case "y":
+                devisService.updateDevisStatus(devis.getId());
+                projectRepository.updateProjectStatus(projectId, ProjectStatus.FINISHED.name());
+                System.out.println("Devis accepted. Project marked as FINISHED.");
+                break;
+            case "no":
+            case "n":
+                projectRepository.updateProjectStatus(projectId, ProjectStatus.CANCELLED.name());
+                System.out.println("Devis rejected. Project marked as CANCELLED.");
+                break;
+            default:
+                System.out.println("Invalid choice. Please enter 'Yes' or 'No'.");
+        }
+
         try {
             devisMenu.findDevisByProject(projectId);
         } catch (DevisNotFoundException devisNotFoundException) {

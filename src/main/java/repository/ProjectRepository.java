@@ -2,8 +2,10 @@ package main.java.repository;
 
 import main.java.config.DatabaseConnection;
 import main.java.domain.entities.*;
+import main.java.domain.enums.ProjectStatus;
 import main.java.exception.ProjectNotFoundException;
 import main.java.repository.interfaces.ProjectInterface;
+import main.java.service.ProjectService;
 
 import java.sql.*;
 import java.util.*;
@@ -43,7 +45,19 @@ public class ProjectRepository implements ProjectInterface {
 
     @Override
     public Optional<Project> findById(Long id) {
-        String sql = "SELECT * FROM projects WHERE id = ?";
+        String sql = "SELECT\n" +
+                "    p.projectname AS projectName,\n" +
+                "    p.profitmargin AS profitMargin,\n" +
+                "    p.status AS status,\n" +
+                "    p.surface AS surface,\n" +
+                "    p.totalcost AS totalCost,\n" +
+                "    p.id AS id,\n" +
+                "    c.id AS client_id,\n" +
+                "    c.name AS client_name,\n" +
+                "    c.address AS client_address\n" +
+                "FROM projects p\n" +
+                "         JOIN clients c ON c.id = p.client_id\n" +
+                "WHERE p.id = ?;\n";
         try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
             preparedStatement.setLong(1, id);
             ResultSet resultSet = preparedStatement.executeQuery();
@@ -51,6 +65,8 @@ public class ProjectRepository implements ProjectInterface {
             if (resultSet.next()) {
                 Client client = new Client();
                 client.setId(resultSet.getLong("client_id"));
+                client.setName(resultSet.getString("client_name"));
+                client.setAddress(resultSet.getString("client_address"));
                 Project foundProject = new Project(
                         resultSet.getLong("id"),
                         resultSet.getString("projectName"),
@@ -276,5 +292,21 @@ public class ProjectRepository implements ProjectInterface {
         } catch (SQLException sqlException) {
             System.out.println(sqlException.getMessage());
         }
+    }
+
+    @Override
+    public boolean updateProjectStatus(Long projctId, String status) {
+        String sql = "UPDATE projects SET status = ?::projectStatus  WHERE id = ?";
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+            preparedStatement.setString(1, status);
+            preparedStatement.setLong(2, projctId);
+            int result = preparedStatement.executeUpdate();
+            if (result == 1) {
+                return true;
+            }
+        } catch (SQLException sqlException) {
+            System.out.println(sqlException.getMessage());
+        }
+        return false;
     }
 }

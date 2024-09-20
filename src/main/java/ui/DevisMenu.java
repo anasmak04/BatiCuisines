@@ -33,7 +33,8 @@ public class DevisMenu {
             System.out.println("3. Find All Devis");
             System.out.println("4. Find Devis by ID");
             System.out.println("5. Update Devis");
-            System.out.println("6. Exit");
+            System.out.println("6. Accept  Devis");
+            System.out.println("7. Exit");
             System.out.print("Choose an option: ");
 
             int choice = scanner.nextInt();
@@ -62,6 +63,11 @@ public class DevisMenu {
                     System.out.println("Invalid choice. Please try again.");
             }
         }
+    }
+
+
+    public void save(Devis devis){
+        devisService.save(devis);
     }
 
 
@@ -182,19 +188,20 @@ public class DevisMenu {
                     "Devis ID", "Estimated Amount", "Issue Date", "Validated Date", "Is Accepted", "Project Name", "Client Name");
             System.out.printf("+--------------+-------------------+--------------+--------------+-------------+--------------------+--------------------+%n");
 
-            System.out.printf("| %-12d | %-17.2f | %-12s | %-12s | %-11b |%n",
+            System.out.printf("| %-12d | %-17.2f | %-12s | %-12s | %-11b | %-18s | %-18s |%n",
                     devis1.getId(),
                     devis1.getEstimatedAmount(),
                     devis1.getIssueDate(),
-                    devis1.getValidatedDate(),
-                    devis1.isAccepted()
+                    devis1.getValidatedDate() != null ? devis1.getValidatedDate() : "N/A",
+                    devis1.isAccepted(),
+                    devis1.getProject().getProjectName() != null ? devis1.getProject().getProjectName() : "N/A",
+                    devis1.getProject().getClient().getName() != null ? devis1.getProject().getClient().getName() : "N/A"
             );
 
             System.out.printf("+--------------+-------------------+--------------+--------------+-------------+--------------------+--------------------+%n");
         });
 
-         devisOptional.orElseThrow(() -> new DevisNotFoundException("devis not found !"));
+        devisOptional.orElseThrow(() -> new DevisNotFoundException("Devis not found!"));
     }
-
 
 }

@@ -41,4 +41,8 @@ public class DevisService {
       return   this.devisRepository.findDevisByProjectId(projectId);
     }
 
+    public boolean updateDevisStatus(Long devisId) {
+        return this.devisRepository.updateDevisStatus(devisId);
+    }
+
 }
