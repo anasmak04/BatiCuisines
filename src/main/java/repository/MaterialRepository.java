@@ -28,15 +28,23 @@ public class MaterialRepository implements MaterialInterface {
 
     @Override
     public Material save(Material material) {
-        String sql = "INSERT INTO materials (component_id, unitCost, quantity, transportCost, qualityCoefficient) " +
-                "VALUES (?, ?, ?, ?, ?) RETURNING id";
-        try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
-            preparedStatement.setLong(1, material.getComponent().getId());
-            preparedStatement.setDouble(2, material.getUnitCost());
-            preparedStatement.setDouble(3, material.getQuantity());
-            preparedStatement.setDouble(4, material.getTransportCost());
-            preparedStatement.setDouble(5, material.getCoefficientQuality());
+        Component savedComponent = componentRepository.save(material);
+        material.setId(savedComponent.getId());
 
+        String sql = "INSERT INTO materials (id, name, unitCost, quantity, transportCost, qualityCoefficient, project_id, componentType, vatRate) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING id";
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+            preparedStatement.setLong(1, material.getId());
+            preparedStatement.setString(2, material.getName());
+            preparedStatement.setDouble(3, material.getUnitCost());
+            preparedStatement.setDouble(4, material.getQuantity());
+            preparedStatement.setDouble(5, material.getTransportCost());
+            preparedStatement.setDouble(6, material.getCoefficientQuality());
+            preparedStatement.setLong(7, material.getProject().getId());
+            preparedStatement.setString(8, material.getComponentType());
+            preparedStatement.setDouble(9, material.getVatRate());
+
+            System.out.println(preparedStatement);
             ResultSet resultSet = preparedStatement.executeQuery();
             if (resultSet.next()) {
                 Long generatedId = resultSet.getLong(1);
@@ -52,26 +60,50 @@ public class MaterialRepository implements MaterialInterface {
         return material;
     }
 
+    @Override
+    public Material update(Material material) {
+        Component updatedComponent = componentRepository.update(material);
+        material.setId(updatedComponent.getId());
+
+        String sql = "UPDATE materials SET name = ? , vatrate = ? ,unitCost = ?, quantity = ?, transportCost = ?, qualityCoefficient = ? " +
+                "WHERE id = ?";
+
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+            preparedStatement.setString(1, material.getName());
+            preparedStatement.setDouble(2, material.getVatRate());
+            preparedStatement.setDouble(3, material.getUnitCost());
+            preparedStatement.setDouble(4, material.getQuantity());
+            preparedStatement.setDouble(5, material.getTransportCost());
+            preparedStatement.setDouble(6, material.getCoefficientQuality());
+            preparedStatement.setLong(7, material.getId());
+            System.out.println(preparedStatement);
+            int rowsAffected = preparedStatement.executeUpdate();
+            if(rowsAffected == 0) {
+                throw new MaterialNotFoundException("something wrong when updating material");
+            }
+        } catch (SQLException e) {
+            System.out.println("Error updating material: " + e.getMessage());
+        }
+
+        return material;
+    }
+
 
     @Override
     public Optional<Material> findById(Long id) {
-        String sql = "SELECT \n" +
-                "    m.unitCost AS unitCost, \n" +
-                "    m.quantity AS quantity,\n" +
-                "    m.transportCost AS transportCost, \n" +
-                "    m.coefficientQuality AS coefficientQuality,\n" +
-                "    c.id AS componentId,\n" +
-                "    c.name AS componentName,\n" +
-                "    c.vatRate AS vatRate\n" +
-                "FROM \n" +
-                "    materials m\n" +
-                "LEFT JOIN \n" +
-                "    components c ON m.component_id = c.id\n" +
-                "WHERE \n" +
-                "    m.id = ?;";
+        String sql = "SELECT " +
+                "    m.id AS materialId, " +
+                "    m.unitCost, " +
+                "    m.quantity, " +
+                "    m.transportCost, " +
+                "    m.qualityCoefficient, " +
+                "    m.name AS componentName, " +
+                "    m.vatRate, " +
+                "    m.project_id " +
+                "FROM materials m " +
+                "WHERE m.id = ?";
 
         try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
-
             preparedStatement.setLong(1, id);
             ResultSet resultSet = preparedStatement.executeQuery();
 
@@ -81,20 +113,19 @@ public class MaterialRepository implements MaterialInterface {
                 foundMaterial.setUnitCost(resultSet.getDouble("unitCost"));
                 foundMaterial.setQuantity(resultSet.getDouble("quantity"));
                 foundMaterial.setTransportCost(resultSet.getDouble("transportCost"));
-                foundMaterial.setCoefficientQuality(resultSet.getDouble("coefficientQuality"));
+                foundMaterial.setCoefficientQuality(resultSet.getDouble("qualityCoefficient"));
+                foundMaterial.setName(resultSet.getString("componentName"));
+                foundMaterial.setVatRate(resultSet.getDouble("vatRate"));
 
-                Component component = new Component();
-                component.setId(resultSet.getLong("componentId"));
-                component.setName(resultSet.getString("componentName"));
-                component.setVatRate(resultSet.getDouble("vatRate"));
+                Project project = new Project();
+                project.setId(resultSet.getLong("project_id"));
+                foundMaterial.setProject(project);
 
-                foundMaterial.setComponent(component);
                 return Optional.of(foundMaterial);
             }
         } catch (SQLException sqlException) {
             System.out.println("Error finding material: " + sqlException.getMessage());
         }
-
 
         return Optional.empty();
     }
@@ -102,16 +133,16 @@ public class MaterialRepository implements MaterialInterface {
 
     @Override
     public List<Material> findAll() {
-        String sql = "SELECT\n" +
-                "    m.id AS materialId,\n" +
-                "    m.transportcost AS transportcost,\n" +
-                "    m.qualitycoefficient AS qualitycoefficient,\n" +
-                "    m.unitcost AS unitcost,\n" +
-                "    c.id AS componentId,\n" +
-                "    c.name AS componentName,\n" +
-                "    c.vatrate AS VatRate\n" +
-                "FROM materials m\n" +
-                "    LEFT JOIN components c ON m.component_id = c.id";
+        String sql = "SELECT " +
+                "    m.id AS materialId, " +
+                "    m.unitCost, " +
+                "    m.quantity, " +
+                "    m.transportCost, " +
+                "    m.qualityCoefficient, " +
+                "    m.name AS componentName, " +
+                "    m.vatRate, " +
+                "    m.project_id " +
+                "FROM materials m";
 
         List<Material> materials = new ArrayList<>();
 
@@ -121,16 +152,17 @@ public class MaterialRepository implements MaterialInterface {
             while (resultSet.next()) {
                 Material material = new Material();
                 material.setId(resultSet.getLong("materialId"));
-                material.setTransportCost(resultSet.getDouble("transportcost"));
-                material.setCoefficientQuality(resultSet.getDouble("qualitycoefficient"));
-                material.setUnitCost(resultSet.getDouble("unitcost"));
+                material.setUnitCost(resultSet.getDouble("unitCost"));
+                material.setQuantity(resultSet.getDouble("quantity"));
+                material.setTransportCost(resultSet.getDouble("transportCost"));
+                material.setCoefficientQuality(resultSet.getDouble("qualityCoefficient"));
+                material.setName(resultSet.getString("componentName"));
+                material.setVatRate(resultSet.getDouble("vatRate"));
 
-                Component component = new Component();
-                component.setId(resultSet.getLong("componentId"));
-                component.setName(resultSet.getString("componentName"));
-                component.setVatRate(resultSet.getDouble("VatRate"));
+                Project project = new Project();
+                project.setId(resultSet.getLong("project_id"));
+                material.setProject(project);
 
-                material.setComponent(component);
                 materials.add(material);
             }
         } catch (SQLException e) {
@@ -141,10 +173,7 @@ public class MaterialRepository implements MaterialInterface {
     }
 
 
-    @Override
-    public Material update(Material material) {
-        return null;
-    }
+
 
     @Override
     public boolean delete(Long id) {
@@ -167,20 +196,15 @@ public class MaterialRepository implements MaterialInterface {
     public List<Material> findAllByProjectId(Long projectId) {
         List<Material> materials = new ArrayList<>();
         String sql = "SELECT m.id, m.unitCost, m.quantity, m.transportCost, m.qualityCoefficient, " +
-                "c.id AS component_id, c.name AS component_name, c.vatRate, c.project_id " +
+                "m.name AS component_name, m.vatRate, m.project_id " +
                 "FROM materials m " +
-                "JOIN components c ON m.component_id = c.id " +
-                "WHERE c.project_id = ?";
+                "WHERE m.project_id = ?";
+
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setLong(1, projectId);
             ResultSet resultSet = statement.executeQuery();
 
             while (resultSet.next()) {
-                Component component = new Component();
-                component.setId(resultSet.getLong("component_id"));
-                component.setName(resultSet.getString("component_name"));
-                component.setVatRate(resultSet.getDouble("vatRate"));
-
                 Project project = new Project();
                 project.setId(resultSet.getLong("project_id"));
 
@@ -190,15 +214,15 @@ public class MaterialRepository implements MaterialInterface {
                 material.setQuantity(resultSet.getDouble("quantity"));
                 material.setTransportCost(resultSet.getDouble("transportCost"));
                 material.setCoefficientQuality(resultSet.getDouble("qualityCoefficient"));
+                material.setName(resultSet.getString("component_name"));
+                material.setVatRate(resultSet.getDouble("vatRate"));
 
-                component.setProject(project);
-                material.setComponent(component);
+                material.setProject(project);
 
                 materials.add(material);
             }
         } catch (SQLException e) {
-            e.printStackTrace();
-            System.out.println(e.getMessage());
+            System.out.println("Error finding materials by project ID: " + e.getMessage());
         }
 
         return materials;

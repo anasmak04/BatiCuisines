@@ -45,7 +45,7 @@ public class MaterialService {
         return materialRepository.findAllByProjectId(projectId);
     }
     private double getVatRateForMaterial(Material material) {
-        return componentRepository.findVatRateForComponent(material.getComponent().getId());
+        return componentRepository.findVatRateForComponent(material.getId());
     }
 
 

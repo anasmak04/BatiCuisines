@@ -50,7 +50,7 @@ public class WorkForceService {
     }
 
     public double getWorkforceVatRate(WorkForce workForce) {
-        return componentRepository.findVatRateForComponent(workForce.getComponent().getId());
+        return componentRepository.findVatRateForComponent(workForce.getId());
     }
 
     public double calculateWorkforceBeforeVat(WorkForce workForce) {

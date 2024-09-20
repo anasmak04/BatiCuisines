@@ -22,6 +22,46 @@ public class WorkForceMenu {
         this.scanner = new Scanner(System.in);
     }
 
+
+    public void displayMenu() {
+        int choice;
+        do {
+            System.out.println("\n--- Workforce Management Menu ---");
+            System.out.println("1. Add Workforce");
+            System.out.println("2. Update Workforce");
+            System.out.println("3. Delete Workforce");
+            System.out.println("4. Find Workforce by ID");
+            System.out.println("5. List All Workforces");
+            System.out.println("0. Exit");
+            System.out.print("Select an option: ");
+            choice = scanner.nextInt();
+            scanner.nextLine();
+
+            switch (choice) {
+                case 1:
+                    addWorkForce(new Project());
+                    break;
+                case 2:
+                    update();
+                    break;
+                case 3:
+                    delete();
+                    break;
+                case 4:
+                    findById();
+                    break;
+                case 5:
+                    findAll();
+                    break;
+                case 0:
+                    System.out.println("Exiting Workforce Management.");
+                    break;
+                default:
+                    System.out.println("Invalid choice. Please select a valid option.");
+            }
+        } while (choice != 0);
+    }
+
     public WorkForce addWorkForce(Project project) {
         String continueChoice;
         WorkForce workForce = null;
@@ -43,17 +83,9 @@ public class WorkForceMenu {
 
             System.out.print("Enter the productivity factor (1.0 = standard, > 1.0 = high productivity): ");
             double productivityFactor = scanner.nextDouble();
-            scanner.nextLine();
 
-            Component component = new Component();
-            component.setName(name);
-            component.setComponentType(ComponentType.WORKFORCE.name());
-            component.setVatRate(vatRate);
-            component.setProject(project);
 
-            Component savedComponent = componentService.save(component);
-
-            workForce = new WorkForce(0L, name, "workforce", vatRate, project, hourlyRate, hoursWorked, productivityFactor, savedComponent);
+            workForce = new WorkForce(0L, name, "workforce", vatRate, project, hourlyRate, hoursWorked, productivityFactor);
             workForceService.save(workForce);
 
             System.out.print("Would you like to add another workforce? (y/n): ");
@@ -68,7 +100,8 @@ public class WorkForceMenu {
     public void update() {
         System.out.print("Enter id of workforce : ");
         Long id = scanner.nextLong();
-        WorkForce workForce = workForceService.findById(id).orElseThrow(() -> new LaborNotFoundException("workforce not found"));
+       workForceService.findById(id).orElseThrow(() -> new LaborNotFoundException("workforce not found"));
+       scanner.nextLine();
         System.out.print("Enter name of workforce : ");
         String name = scanner.nextLine();
         System.out.print("Enter number of hours worked : ");
@@ -77,18 +110,14 @@ public class WorkForceMenu {
         double hourlyCost = scanner.nextDouble();
         System.out.print("Enter productivity factor : ");
         double productivityFactor = scanner.nextDouble();
-
-        Component component = new Component();
         System.out.print("Enter the name of component ");
         String componentName = scanner.nextLine();
         System.out.print("Enter vat rate : ");
         double vatRate = scanner.nextDouble();
-        component.setName(name);
-        component.setComponentType(ComponentType.WORKFORCE.name());
-        component.setVatRate(vatRate);
         Project project = new Project();
-        WorkForce workForce1 = new WorkForce(id, componentName, ComponentType.WORKFORCE.name(), vatRate, project, hourlyCost, hoursWorked, productivityFactor, component);
-        this.workForceService.update(workForce);
+
+        WorkForce workForce1 = new WorkForce(id, name, ComponentType.WORKFORCE.name(), vatRate, project, hourlyCost, hoursWorked, productivityFactor);
+        this.workForceService.update(workForce1);
     }
 
     public void delete() {
@@ -97,35 +126,61 @@ public class WorkForceMenu {
         this.workForceService.delete(id);
     }
 
+
+
+
     public void findById() {
         System.out.print("Enter the workforce ID: ");
         Long id = scanner.nextLong();
+
         workForceService.findById(id).ifPresentOrElse(workForce -> {
-            System.out.println("\n--- Workforce Details ---");
-            System.out.println("ID: " + workForce.getId());
-            System.out.println("Component Name: " + workForce.getComponent().getName());
-            System.out.println("Hourly Cost: " + workForce.getHourlyCost());
-            System.out.println("Working Hours: " + workForce.getWorkingHours());
-            System.out.println("Worker Productivity: " + workForce.getWorkerProductivity());
+            System.out.printf("| %-10s | %-15s | %-15s | %-15s | %-20s |%n",
+                    "ID", "Hourly Cost", "Working Hours", "Productivity", "Component Name");
+            System.out.println("-------------------------------------------------------------------------------");
+
+            System.out.printf("| %-10d | %-15.2f | %-15.2f | %-15.2f | %-20s |%n",
+                    workForce.getId(),
+                    workForce.getHourlyCost(),
+                    workForce.getWorkingHours(),
+                    workForce.getWorkerProductivity(),
+                    workForce.getName());
+
+            System.out.println("-------------------------------------------------------------------------------");
         }, () -> {
             System.out.println("Workforce with ID " + id + " not found.");
+            System.out.println("-------------------------------------------------------------------------------");
         });
     }
+
 
 
     public void findAll() {
         System.out.println("--- List of All Workforce ---");
 
         List<WorkForce> workForces = workForceService.findAll();
+
+        System.out.printf("| %-10s | %-15s | %-15s | %-15s | %-20s |%n",
+                "ID", "Hourly Cost", "Working Hours", "Productivity", "Component Name");
+        System.out.println("-------------------------------------------------------------------------------");
+
+        if (workForces.isEmpty()) {
+            System.out.println("| No workforce found.");
+            System.out.println("-------------------------------------------------------------------------------");
+            return;
+        }
+
         workForces.forEach(workForce -> {
-            System.out.println("\n--- Workforce Details ---");
-            System.out.println("ID: " + workForce.getId());
-            System.out.println("Component Name: " + workForce.getComponent().getName());
-            System.out.println("Hourly Cost: " + workForce.getHourlyCost());
-            System.out.println("Working Hours: " + workForce.getWorkingHours());
-            System.out.println("Worker Productivity: " + workForce.getWorkerProductivity());
+            System.out.printf("| %-10d | %-15.2f | %-15.2f | %-15.2f | %-20s |%n",
+                    workForce.getId(),
+                    workForce.getHourlyCost(),
+                    workForce.getWorkingHours(),
+                    workForce.getWorkerProductivity(),
+                    workForce.getName());
         });
+
+        System.out.println("-------------------------------------------------------------------------------");
     }
+
 
 
 }

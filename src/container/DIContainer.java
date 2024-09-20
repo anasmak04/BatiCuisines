@@ -43,6 +43,7 @@ public class DIContainer {
         container.register(ClientMenu.class, new ClientMenu(container.get(ClientService.class)));
         container.register(MaterialMenu.class, new MaterialMenu(container.get(MaterialService.class), container.get(ComponentService.class)));
         container.register(WorkForceMenu.class, new WorkForceMenu(container.get(WorkForceService.class), container.get(ComponentService.class)));
+
         container.register(ProjectMenu.class, new ProjectMenu(
                 container.get(ProjectService.class),
                 container.get(ClientMenu.class),
@@ -61,7 +62,9 @@ public class DIContainer {
                 container.get(ProjectMenu.class),
                 container.get(DevisMenu.class),
                 container.get(ClientMenu.class),
-                container.get(CostCalculationMenu.class)
+                container.get(CostCalculationMenu.class),
+                container.get(MaterialMenu.class),
+                container.get(WorkForceMenu.class)
         ));
 
         return container;

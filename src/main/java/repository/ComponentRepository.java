@@ -30,7 +30,7 @@ public class ComponentRepository implements ComponentInterface {
             preparedStatement.setString(1, component.getName());
             preparedStatement.setString(2, component.getComponentType());
             preparedStatement.setDouble(3, component.getVatRate());
-            preparedStatement.setLong(4, component.getProject().getId());
+            preparedStatement.setLong(4, component.getProject().getId()); // Ensure project is not null
 
             ResultSet resultSet = preparedStatement.executeQuery();
             if (resultSet.next()) {
@@ -44,6 +44,7 @@ public class ComponentRepository implements ComponentInterface {
             throw new RuntimeException("Error saving component", e);
         }
     }
+
 
 
     @Override

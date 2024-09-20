@@ -166,7 +166,7 @@ public class ProjectRepository implements ProjectInterface {
                 material.setQuantity(resultSet.getDouble("quantity"));
                 material.setTransportCost(resultSet.getDouble("transportCost"));
                 material.setCoefficientQuality(resultSet.getDouble("coefficientQuality"));
-                material.setComponent(component);
+//                material.setComponent(component);
 
                 component.addMaterial(material);
 
@@ -177,7 +177,7 @@ public class ProjectRepository implements ProjectInterface {
                 workForce.setHourlyCost(resultSet.getDouble("hourlyCost"));
                 workForce.setWorkingHours(resultSet.getInt("workingHours"));
                 workForce.setWorkerProductivity(resultSet.getDouble("workerProductivity"));
-                workForce.setComponent(component);
+//                workForce.setComponent(component);
 
                 component.addWorkForce(workForce);
 
