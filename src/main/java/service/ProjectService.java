@@ -44,4 +44,8 @@ public class ProjectService  {
         projectRepository.updateProjectFields(projectId, profitMargin , totalCost);
     }
 
+    public boolean updateProjectStatus(Long projectId , String status){
+      return projectRepository.updateProjectStatus(projectId,status);
+    }
+
 }

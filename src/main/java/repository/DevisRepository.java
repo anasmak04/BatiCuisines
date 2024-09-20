@@ -32,9 +32,6 @@ public class DevisRepository implements DevisInterface {
                 if (generatedKeys.next()) {
                     Long id = generatedKeys.getLong(1);
                     devis.setId(id);
-                    System.out.println("Quote was successfully saved with ID " + id);
-                } else {
-                    throw new SQLException("Creating quote failed, no ID obtained.");
                 }
             }
         } catch (SQLException e) {
@@ -198,8 +195,20 @@ public class DevisRepository implements DevisInterface {
 
     @Override
     public Optional<Devis> findDevisByProjectId(Long projectId) {
-        String sql = "SELECT id, estimatedamount, issuedate, validateddate, isaccepted " +
-                "FROM quotes WHERE project_id = ?";
+        String sql = "SELECT q.id,\n" +
+                "       q.estimatedamount,\n" +
+                "       q.issuedate,\n" +
+                "       q.validateddate,\n" +
+                "       q.isaccepted,\n" +
+                "       q.project_id AS project_id,\n" +
+                "       p.id AS prId,\n" +
+                "       p.projectname,\n" +
+                "       p.client_id AS client_id,\n" +
+                "       c.name AS clientName\n" +
+                "FROM quotes q\n" +
+                "JOIN projects p ON p.id = q.project_id\n" +
+                "JOIN clients c ON c.id = p.client_id\n" +
+                "WHERE q.project_id = ?\n";
 
         try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
             preparedStatement.setLong(1, projectId);
@@ -207,13 +216,23 @@ public class DevisRepository implements DevisInterface {
 
             if (resultSet.next()) {
                 Devis devis = new Devis();
+                Project project = new Project();
+                Client client = new Client();
+
+                project.setProjectName(resultSet.getString("projectname"));
+                client.setName(resultSet.getString("clientName"));
+                project.setClient(client);
+
                 devis.setId(resultSet.getLong("id"));
                 devis.setEstimatedAmount(resultSet.getDouble("estimatedamount"));
                 devis.setIssueDate(resultSet.getDate("issuedate").toLocalDate());
-                devis.setValidatedDate(resultSet.getDate("validateddate") != null ? resultSet.getDate("validateddate").toLocalDate() : null);
-                devis.setAccepted(resultSet.getBoolean("isaccepted"));
 
-                // Since you're only fetching the quote, no need to set a project.
+                Date validatedDate = resultSet.getDate("validateddate");
+                devis.setValidatedDate(validatedDate != null ? validatedDate.toLocalDate() : null);
+
+                devis.setAccepted(resultSet.getBoolean("isaccepted"));
+                devis.setProject(project);
+
                 return Optional.of(devis);
             }
         } catch (SQLException sqlException) {
@@ -221,6 +240,21 @@ public class DevisRepository implements DevisInterface {
         }
 
         return Optional.empty();
+    }
+
+    @Override
+    public boolean updateDevisStatus(Long devisId) {
+        String sql = "UPDATE quotes SET isAccepted = true WHERE id = ?";
+        try(PreparedStatement preparedStatement = connection.prepareStatement(sql)){
+            preparedStatement.setLong(1, devisId);
+            int result = preparedStatement.executeUpdate();
+            if(result == 1) {
+                return true;
+            }
+        }catch (SQLException sqlException){
+            System.out.println(sqlException.getMessage());
+        }
+        return false;
     }
 
 

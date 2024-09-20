@@ -9,7 +9,7 @@ import java.util.Map;
 
 public class DIContainer {
 
-    private Map<Class<?>, Object> instances = new HashMap<>();
+    private final Map<Class<?>, Object> instances = new HashMap<>();
 
     public <T> void register(Class<T> type, T instance) {
         instances.put(type, instance);
@@ -18,6 +18,8 @@ public class DIContainer {
     public <T> T get(Class<T> type) {
         return type.cast(instances.get(type));
     }
+
+
 
     public static DIContainer initialize() {
         DIContainer container = new DIContainer();
