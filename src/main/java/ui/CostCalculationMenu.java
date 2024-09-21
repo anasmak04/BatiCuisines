@@ -1,6 +1,5 @@
 package main.java.ui;
 
-
 import main.java.domain.entities.Devis;
 import main.java.domain.entities.Material;
 import main.java.domain.entities.Project;
@@ -88,15 +87,13 @@ public class CostCalculationMenu {
         if (getYesNoInput("Do you want to apply a profit margin to the project? (y/n): ")) {
             System.out.print("Enter profit margin percentage: ");
             marginRate = scanner.nextDouble();
-            scanner.nextLine();
+            scanner.nextLine();  // Consume the newline character
             project.setProfitMargin(marginRate);
             double profitMargin = totalCost * marginRate / 100;
             totalCost += profitMargin;
         }
 
-
         projectRepository.updateProjectFields(projectId, project.getProfitMargin(), totalCost);
-
 
         System.out.println("\n--- Calculation Result ---");
         System.out.println("Project Name: " + project.getProjectName());
@@ -110,13 +107,11 @@ public class CostCalculationMenu {
         System.out.println("Workforce Cost After VAT: " + String.format("%.2f", totalWorkforceAfterVat) + " €");
         System.out.println("Total Cost Before Margin: " + String.format("%.2f", totalCostBeforeMargin) + " €");
 
-
         if (project.getClient().isProfessional()) {
             System.out.println("\n--- Professional Client Discount Applied ---");
             totalCost *= discount;
             System.out.println("Discounted Total Cost: " + String.format("%.2f", totalCost) + " €");
         }
-
 
         System.out.print("Enter issue date (yyyy-MM-dd): ");
         String issueDate = scanner.nextLine();
@@ -127,42 +122,25 @@ public class CostCalculationMenu {
         Devis devis = new Devis(0L, totalCost, issueDateParse, validatedDateParse, false, project);
         devisService.save(devis);
 
+        LocalDate currentDate = LocalDate.now();
+        if (currentDate.isBefore(validatedDateParse)) {
+            System.out.println("The Devis is pending validation until " + validatedDateParse + ".");
+            System.out.println("You can accept or reject it before this date.");
+            return;
+        }
 
-        if(LocalDate.now().isAfter(validatedDateParse)){
-            System.out.print("Do you want to accept the devis? (Yes/No): ");
-            String choice = scanner.nextLine().trim().toLowerCase();
+        System.out.print("Do you want to accept the Devis? (Yes/No): ");
+        String choice = scanner.nextLine().trim().toLowerCase();
 
-            switch (choice) {
-                case "yes":
-                case "y":
-                    devisService.updateDevisStatus(devis.getId());
-                    projectRepository.updateProjectStatus(projectId, ProjectStatus.FINISHED.name());
-                    System.out.println("Devis accepted. Project marked as FINISHED.");
-                    break;
-                case "no":
-                case "n":
-                    break;
-                default:
-                    System.out.println("Invalid choice. Please enter 'Yes' or 'No'.");
-            }
-        }else{
-            try {
-                devisMenu.findDevisByProject(projectId);
-            } catch (DevisNotFoundException devisNotFoundException) {
-                System.out.println(devisNotFoundException.getMessage());
-            }
-
+        if (choice.equals("yes") || choice.equals("y")) {
+            devisService.updateDevisStatus(devis.getId());
+            projectRepository.updateProjectStatus(projectId, ProjectStatus.FINISHED.name());
+            System.out.println("Devis accepted. Project marked as FINISHED.");
+        } else {
             devisService.cancelDevisAndProjectIfNotAccepted(devis.getId(), validatedDateParse);
             projectRepository.updateProjectStatus(projectId, ProjectStatus.CANCELLED.name());
             System.out.println("Devis rejected. Project marked as CANCELLED.");
-
         }
 
-
-
     }
-
-
-
-
 }
