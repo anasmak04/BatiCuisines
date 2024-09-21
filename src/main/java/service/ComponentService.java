@@ -1,7 +1,7 @@
 package main.java.service;
 
 import main.java.domain.entities.Component;
-import main.java.repository.ComponentRepository;
+import main.java.repository.impl.ComponentRepository;
 
 import java.util.List;
 import java.util.Optional;

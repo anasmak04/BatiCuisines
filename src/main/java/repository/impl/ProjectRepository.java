@@ -1,11 +1,9 @@
-package main.java.repository;
+package main.java.repository.impl;
 
 import main.java.config.DatabaseConnection;
 import main.java.domain.entities.*;
-import main.java.domain.enums.ProjectStatus;
 import main.java.exception.ProjectNotFoundException;
 import main.java.repository.interfaces.ProjectInterface;
-import main.java.service.ProjectService;
 
 import java.sql.*;
 import java.util.*;
@@ -166,7 +164,7 @@ public class ProjectRepository implements ProjectInterface {
                 material.setQuantity(resultSet.getDouble("quantity"));
                 material.setTransportCost(resultSet.getDouble("transportCost"));
                 material.setCoefficientQuality(resultSet.getDouble("coefficientQuality"));
-                material.setComponent(component);
+//                material.setComponent(component);
 
                 component.addMaterial(material);
 
@@ -177,7 +175,7 @@ public class ProjectRepository implements ProjectInterface {
                 workForce.setHourlyCost(resultSet.getDouble("hourlyCost"));
                 workForce.setWorkingHours(resultSet.getInt("workingHours"));
                 workForce.setWorkerProductivity(resultSet.getDouble("workerProductivity"));
-                workForce.setComponent(component);
+//                workForce.setComponent(component);
 
                 component.addWorkForce(workForce);
 

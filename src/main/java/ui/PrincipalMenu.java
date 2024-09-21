@@ -1,7 +1,5 @@
 package main.java.ui;
 
-import main.java.domain.entities.Client;
-
 import java.util.Scanner;
 
 public class PrincipalMenu {
@@ -9,14 +7,15 @@ public class PrincipalMenu {
     private final ProjectMenu projectMenu;
     private static Scanner scanner;
     private final DevisMenu devisMenu;
-    private final ClientMenu  clientMenu;
-    private CostCalculationMenu costCalculationMenu;
-
-    public PrincipalMenu(ProjectMenu projectMenu, DevisMenu devisMenu, ClientMenu clientMenu, CostCalculationMenu costCalculationMenu) {
+    private final ClientMenu clientMenu;
+    private final CostCalculationMenu costCalculationMenu;
+    private final ComponentMenu componentMenu;
+    public PrincipalMenu(ProjectMenu projectMenu, DevisMenu devisMenu, ClientMenu clientMenu, CostCalculationMenu costCalculationMenu, ComponentMenu componentMenu) {
         this.projectMenu = projectMenu;
         this.devisMenu = devisMenu;
         this.clientMenu = clientMenu;
         this.costCalculationMenu = costCalculationMenu;
+        this.componentMenu = componentMenu;
         scanner = new Scanner(System.in);
     }
 
@@ -31,7 +30,8 @@ public class PrincipalMenu {
             System.out.println("3. Calculate project cost");
             System.out.println("4. Devis Menu");
             System.out.println("5. Client Menu");
-            System.out.println("6. Quit");
+            System.out.println("6. Components Menu");
+            System.out.println("7. Quit");
             System.out.print("Please select an option: ");
 
             int choice = scanner.nextInt();
@@ -50,9 +50,12 @@ public class PrincipalMenu {
                     devisMenu();
                     break;
                 case 5:
-                    devisMenu();
+                    clientMenu();
                     break;
                 case 6:
+                    componentMenu();
+                    break;
+                case 7:
                     check = false;
                     break;
                 default:
@@ -63,24 +66,31 @@ public class PrincipalMenu {
 
     }
 
-    public void ProjectAddMenu() {
+    private void ProjectAddMenu() {
         this.projectMenu.addOrSearchClientMenu();
     }
 
-    public void oldProjectsMenu() {
+    private void oldProjectsMenu() {
         this.projectMenu.findAll();
     }
 
-    public void devisMenu() {
+    private void devisMenu() {
         this.devisMenu.displayMenu();
     }
 
-    public void clientMenu(){
+    private void clientMenu() {
         this.clientMenu.clientMenu();
     }
 
-    public void totalCost() {
+    private void totalCost() {
         costCalculationMenu.save();
     }
+
+
+
+    private void componentMenu() {
+        this.componentMenu.menu();
+    }
+
 
 }

@@ -26,23 +26,17 @@ vatRate DOUBLE PRECISION
 );
 
 CREATE TABLE materials (
-id SERIAL PRIMARY KEY,
-component_id INT,
 unitCost DOUBLE PRECISION,
 quantity DOUBLE PRECISION,
 transportCost DOUBLE PRECISION,
-qualityCoefficient DOUBLE PRECISION,
-FOREIGN KEY (component_id) REFERENCES Components(id) ON DELETE CASCADE
-);
+qualityCoefficient DOUBLE PRECISION
+) INHERITS (components);
 
 CREATE TABLE labor (
-id SERIAL PRIMARY KEY,
-component_id INT,
 hourlyRate DOUBLE PRECISION,
 workHours DOUBLE PRECISION,
-workerProductivity DOUBLE PRECISION,
-FOREIGN KEY (component_id) REFERENCES Components(id) ON DELETE CASCADE
-);
+workerProductivity DOUBLE PRECISION
+) INHERITS (components);
 
 CREATE TABLE quotes (
 id SERIAL PRIMARY KEY,

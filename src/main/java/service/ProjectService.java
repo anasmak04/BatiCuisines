@@ -2,7 +2,7 @@ package main.java.service;
 
 
 import main.java.domain.entities.Project;
-import main.java.repository.*;
+import main.java.repository.impl.ProjectRepository;
 import main.java.utils.Validations;
 
 import java.util.List;

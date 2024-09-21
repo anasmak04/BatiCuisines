@@ -95,8 +95,8 @@ public class ProjectMenu {
             Material savedMaterial = materialMenu.addMaterial(savedProject);
             WorkForce savedWorkForce = workForceMenu.addWorkForce(savedProject);
 
-            savedProject.addComponent(savedMaterial.getComponent());
-            savedProject.addComponent(savedWorkForce.getComponent());
+//            savedProject.addComponent(savedMaterial.getComponent());
+//            savedProject.addComponent(savedWorkForce.getComponent());
 
         } catch (Exception e) {
             System.out.println("An error occurred while adding the project: " + e.getMessage());

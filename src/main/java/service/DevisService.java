@@ -1,8 +1,9 @@
 package main.java.service;
 
 import main.java.domain.entities.Devis;
-import main.java.repository.DevisRepository;
+import main.java.repository.impl.DevisRepository;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -43,6 +44,23 @@ public class DevisService {
 
     public boolean updateDevisStatus(Long devisId) {
         return this.devisRepository.updateDevisStatus(devisId);
+    }
+
+
+    private boolean checkIfDevisAccepted(Long devisId , LocalDate validatedDate) {
+        Optional<Devis> fetchedDevs = findById(devisId);
+        LocalDate currentDate = LocalDate.now();
+        if(fetchedDevs.isPresent()){
+           Devis devis = fetchedDevs.get();
+            return  currentDate.isAfter(devis.getValidatedDate());
+        }
+        return false;
+    }
+
+    public void cancelDevisAndProjectIfNotAccepted(Long devisId , LocalDate validatedDate) {
+        if(checkIfDevisAccepted(devisId , validatedDate)){
+            updateDevisStatus(devisId);
+        }
     }
 
 }
