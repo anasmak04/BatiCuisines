@@ -1,7 +1,7 @@
 package main.java.service;
 
 import main.java.domain.entities.Client;
-import main.java.repository.ClientRepository;
+import main.java.repository.impl.ClientRepository;
 import main.java.utils.Validations;
 
 import java.util.List;

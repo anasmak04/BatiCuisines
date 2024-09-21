@@ -1,11 +1,9 @@
-package main.java.repository;
+package main.java.repository.impl;
 
 import main.java.config.DatabaseConnection;
 import main.java.domain.entities.*;
-import main.java.domain.enums.ProjectStatus;
 import main.java.exception.ProjectNotFoundException;
 import main.java.repository.interfaces.ProjectInterface;
-import main.java.service.ProjectService;
 
 import java.sql.*;
 import java.util.*;

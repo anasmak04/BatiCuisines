@@ -1,8 +1,8 @@
 package main.java.service;
 
 import main.java.domain.entities.Material;
-import main.java.repository.ComponentRepository;
-import main.java.repository.MaterialRepository;
+import main.java.repository.impl.ComponentRepository;
+import main.java.repository.impl.MaterialRepository;
 
 import java.util.List;
 import java.util.Optional;

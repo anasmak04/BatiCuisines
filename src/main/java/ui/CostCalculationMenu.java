@@ -7,8 +7,8 @@ import main.java.domain.entities.Project;
 import main.java.domain.entities.WorkForce;
 import main.java.domain.enums.ProjectStatus;
 import main.java.exception.DevisNotFoundException;
-import main.java.repository.ComponentRepository;
-import main.java.repository.ProjectRepository;
+import main.java.repository.impl.ComponentRepository;
+import main.java.repository.impl.ProjectRepository;
 import main.java.service.DevisService;
 import main.java.service.MaterialService;
 import main.java.service.WorkForceService;
@@ -128,31 +128,41 @@ public class CostCalculationMenu {
         devisService.save(devis);
 
 
-        System.out.print("Do you want to accept the devis? (Yes/No): ");
-        String choice = scanner.nextLine().trim().toLowerCase();
+        if(LocalDate.now().isAfter(validatedDateParse)){
+            System.out.print("Do you want to accept the devis? (Yes/No): ");
+            String choice = scanner.nextLine().trim().toLowerCase();
 
-        switch (choice) {
-            case "yes":
-            case "y":
-                devisService.updateDevisStatus(devis.getId());
-                projectRepository.updateProjectStatus(projectId, ProjectStatus.FINISHED.name());
-                System.out.println("Devis accepted. Project marked as FINISHED.");
-                break;
-            case "no":
-            case "n":
-                projectRepository.updateProjectStatus(projectId, ProjectStatus.CANCELLED.name());
-                System.out.println("Devis rejected. Project marked as CANCELLED.");
-                break;
-            default:
-                System.out.println("Invalid choice. Please enter 'Yes' or 'No'.");
+            switch (choice) {
+                case "yes":
+                case "y":
+                    devisService.updateDevisStatus(devis.getId());
+                    projectRepository.updateProjectStatus(projectId, ProjectStatus.FINISHED.name());
+                    System.out.println("Devis accepted. Project marked as FINISHED.");
+                    break;
+                case "no":
+                case "n":
+                    break;
+                default:
+                    System.out.println("Invalid choice. Please enter 'Yes' or 'No'.");
+            }
+        }else{
+            try {
+                devisMenu.findDevisByProject(projectId);
+            } catch (DevisNotFoundException devisNotFoundException) {
+                System.out.println(devisNotFoundException.getMessage());
+            }
+
+            devisService.cancelDevisAndProjectIfNotAccepted(devis.getId(), validatedDateParse);
+            projectRepository.updateProjectStatus(projectId, ProjectStatus.CANCELLED.name());
+            System.out.println("Devis rejected. Project marked as CANCELLED.");
+
         }
 
-        try {
-            devisMenu.findDevisByProject(projectId);
-        } catch (DevisNotFoundException devisNotFoundException) {
-            System.out.println(devisNotFoundException.getMessage());
-        }
+
+
     }
+
+
 
 
 }

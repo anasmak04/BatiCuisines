@@ -1,6 +1,6 @@
 package container;
 
-import main.java.repository.*;
+import main.java.repository.impl.*;
 import main.java.service.*;
 import main.java.ui.*;
 
@@ -20,7 +20,6 @@ public class DIContainer {
     }
 
 
-
     public static DIContainer initialize() {
         DIContainer container = new DIContainer();
 
@@ -28,7 +27,6 @@ public class DIContainer {
         container.register(DevisRepository.class, new DevisRepository());
         container.register(ComponentRepository.class, new ComponentRepository());
         container.register(ProjectRepository.class, new ProjectRepository());
-
         container.register(DevisService.class, new DevisService(container.get(DevisRepository.class)));
         container.register(ProjectService.class, new ProjectService(container.get(ProjectRepository.class)));
         container.register(ClientService.class, new ClientService(container.get(ClientRepository.class)));
@@ -43,6 +41,10 @@ public class DIContainer {
         container.register(ClientMenu.class, new ClientMenu(container.get(ClientService.class)));
         container.register(MaterialMenu.class, new MaterialMenu(container.get(MaterialService.class), container.get(ComponentService.class)));
         container.register(WorkForceMenu.class, new WorkForceMenu(container.get(WorkForceService.class), container.get(ComponentService.class)));
+        container.register(ComponentMenu.class , new ComponentMenu(
+                container.get(MaterialMenu.class),
+                container.get(WorkForceMenu.class)
+        ));
 
         container.register(ProjectMenu.class, new ProjectMenu(
                 container.get(ProjectService.class),
@@ -63,8 +65,7 @@ public class DIContainer {
                 container.get(DevisMenu.class),
                 container.get(ClientMenu.class),
                 container.get(CostCalculationMenu.class),
-                container.get(MaterialMenu.class),
-                container.get(WorkForceMenu.class)
+                container.get(ComponentMenu.class)
         ));
 
         return container;

@@ -1,7 +1,5 @@
 package main.java.ui;
 
-import main.java.domain.entities.Client;
-
 import java.util.Scanner;
 
 public class PrincipalMenu {
@@ -9,18 +7,15 @@ public class PrincipalMenu {
     private final ProjectMenu projectMenu;
     private static Scanner scanner;
     private final DevisMenu devisMenu;
-    private final MaterialMenu materialMenu;
     private final ClientMenu clientMenu;
-    private final WorkForceMenu workForceMenu;
     private final CostCalculationMenu costCalculationMenu;
-
-    public PrincipalMenu(ProjectMenu projectMenu, DevisMenu devisMenu, ClientMenu clientMenu, CostCalculationMenu costCalculationMenu, MaterialMenu materialMenu, WorkForceMenu workForceMenu) {
+    private final ComponentMenu componentMenu;
+    public PrincipalMenu(ProjectMenu projectMenu, DevisMenu devisMenu, ClientMenu clientMenu, CostCalculationMenu costCalculationMenu, ComponentMenu componentMenu) {
         this.projectMenu = projectMenu;
         this.devisMenu = devisMenu;
         this.clientMenu = clientMenu;
         this.costCalculationMenu = costCalculationMenu;
-        this.materialMenu = materialMenu;
-        this.workForceMenu = workForceMenu;
+        this.componentMenu = componentMenu;
         scanner = new Scanner(System.in);
     }
 
@@ -35,9 +30,8 @@ public class PrincipalMenu {
             System.out.println("3. Calculate project cost");
             System.out.println("4. Devis Menu");
             System.out.println("5. Client Menu");
-            System.out.println("6. Material Menu");
-            System.out.println("7. Workforce Menu");
-            System.out.println("8. Quit");
+            System.out.println("6. Components Menu");
+            System.out.println("7. Quit");
             System.out.print("Please select an option: ");
 
             int choice = scanner.nextInt();
@@ -56,15 +50,12 @@ public class PrincipalMenu {
                     devisMenu();
                     break;
                 case 5:
-                    devisMenu();
+                    clientMenu();
                     break;
                 case 6:
-                    materialMenu();
+                    componentMenu();
                     break;
                 case 7:
-                    workforceMenu();
-                    break;
-                case 8:
                     check = false;
                     break;
                 default:
@@ -95,12 +86,10 @@ public class PrincipalMenu {
         costCalculationMenu.save();
     }
 
-    private void materialMenu() {
-        materialMenu.materialMenu();
-    }
 
-    private void workforceMenu() {
-        workForceMenu.displayMenu();
+
+    private void componentMenu() {
+        this.componentMenu.menu();
     }
 
 

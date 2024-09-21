@@ -1,4 +1,4 @@
-package main.java.repository;
+package main.java.repository.impl;
 
 import main.java.config.DatabaseConnection;
 import main.java.domain.entities.Component;

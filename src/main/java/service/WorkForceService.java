@@ -1,8 +1,8 @@
 package main.java.service;
 
 import main.java.domain.entities.WorkForce;
-import main.java.repository.ComponentRepository;
-import main.java.repository.WorkForceRepository;
+import main.java.repository.impl.ComponentRepository;
+import main.java.repository.impl.WorkForceRepository;
 
 import java.util.List;
 import java.util.Optional;

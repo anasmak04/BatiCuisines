@@ -1,7 +1,7 @@
 package test.repository;
 
 import main.java.domain.entities.Client;
-import main.java.repository.ClientRepository;
+import main.java.repository.impl.ClientRepository;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
