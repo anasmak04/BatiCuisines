@@ -2,8 +2,10 @@ package main.java.ui;
 
 import main.java.domain.entities.Devis;
 import main.java.domain.entities.Project;
+import main.java.domain.enums.ProjectStatus;
 import main.java.exception.DevisNotFoundException;
 import main.java.exception.ProjectNotFoundException;
+import main.java.repository.impl.ProjectRepository;
 import main.java.service.DevisService;
 import main.java.service.ProjectService;
 import main.java.utils.DateFormat;
@@ -57,6 +59,9 @@ public class DevisMenu {
                     update();
                     break;
                 case 6:
+                    acceptDevis();
+                    break;
+                case 7:
                     System.out.println("Exiting...");
                     return;
                 default:
@@ -203,5 +208,51 @@ public class DevisMenu {
 
         devisOptional.orElseThrow(() -> new DevisNotFoundException("Devis not found!"));
     }
+
+    public void acceptDevis() {
+        Project project = null;
+
+        System.out.println("Enter Project Name: ");
+        String projectName = scanner.nextLine();
+
+        try {
+            project = this.projectService.findProjectByName(projectName);
+        } catch (ProjectNotFoundException projectNotFoundException) {
+            System.out.println(projectNotFoundException.getMessage());
+            return;
+        }
+
+        if (project == null) {
+            System.out.println("Project not found.");
+            return;
+        }
+
+        Long projectId = project.getId();
+        Optional<Devis> devis = Optional.empty();
+
+        try {
+            devis = this.devisService.findDevisByproject(projectId);
+        } catch (DevisNotFoundException devisNotFoundException) {
+            System.out.println(devisNotFoundException.getMessage());
+            return;
+        }
+
+        if (devis.isPresent()) {
+            System.out.println("Do you want to accept this devis? (y/n): ");
+            String choice = scanner.nextLine();
+
+            if (choice.equalsIgnoreCase("y") || choice.equalsIgnoreCase("yes")) {
+                this.devisService.updateDevisStatus(devis.get().getId());
+                this.projectService.updateProjectStatus(projectId , ProjectStatus.FINISHED.name());
+                System.out.println("Devis accepted.");
+                System.out.println("Project accepted.");
+            } else {
+                System.out.println("Devis not accepted.");
+            }
+        } else {
+            System.out.println("Devis not found.");
+        }
+    }
+
 
 }
