@@ -79,13 +79,10 @@ public class DevisMenu {
     private void saveDevis() {
         System.out.print("Enter Project Name: ");
         String projectName = scanner.nextLine();
-        Project project = null;
-        try {
-            project = projectService.findProjectByName(projectName);
-        } catch (ProjectNotFoundException projectNotFoundException) {
-            System.out.println(projectNotFoundException.getMessage());
-            return;
-        }
+        Project project = projectService.findProjectByName(projectName).orElseThrow(
+                () -> new ProjectNotFoundException("project name not found")
+        );
+
 
         System.out.print("Enter estimated amount: ");
         double estimatedAmount = scanner.nextDouble();
@@ -173,13 +170,9 @@ public class DevisMenu {
         LocalDate validatedDateParse = DateFormat.parseDate(validatedDate);
         System.out.print("Enter Project Name: ");
         String projectName = scanner.nextLine();
-        Project project = null;
-        try {
-            project = projectService.findProjectByName(projectName);
-        } catch (ProjectNotFoundException projectNotFoundException) {
-            System.out.println(projectNotFoundException.getMessage());
-            return;
-        }
+        Project project = projectService.findProjectByName(projectName).orElseThrow(
+                    () -> new ProjectNotFoundException("project name not found")
+            );
         Devis devis = new Devis(id, estimatedAmount, issueDateParse, validatedDateParse, false, project);
         devisService.update(devis);
     }
@@ -210,22 +203,14 @@ public class DevisMenu {
     }
 
     public void acceptDevis() {
-        Project project = null;
 
-        System.out.println("Enter Project Name: ");
+        System.out.print("Enter Project Name: ");
         String projectName = scanner.nextLine();
 
-        try {
-            project = this.projectService.findProjectByName(projectName);
-        } catch (ProjectNotFoundException projectNotFoundException) {
-            System.out.println(projectNotFoundException.getMessage());
-            return;
-        }
+       Project project = this.projectService.findProjectByName(projectName).orElseThrow(
+                      () -> new ProjectNotFoundException("project name not found")
+        );
 
-        if (project == null) {
-            System.out.println("Project not found.");
-            return;
-        }
 
         Long projectId = project.getId();
         Optional<Devis> devis = Optional.empty();
@@ -238,7 +223,7 @@ public class DevisMenu {
         }
 
         if (devis.isPresent()) {
-            System.out.println("Do you want to accept this devis? (y/n): ");
+            System.out.print("Do you want to accept this devis? (y/n): ");
             String choice = scanner.nextLine();
 
             if (choice.equalsIgnoreCase("y") || choice.equalsIgnoreCase("yes")) {

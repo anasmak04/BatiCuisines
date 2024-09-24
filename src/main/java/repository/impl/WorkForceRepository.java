@@ -48,7 +48,6 @@ public class WorkForceRepository implements WorkForceInterface {
             if (resultSet.next()) {
                 Long generatedId = resultSet.getLong(1);
                 workForce.setId(generatedId);
-                System.out.println("Work force saved successfully with ID: " + generatedId);
             } else {
                 throw new SQLException("Failed to save labor, no ID obtained.");
             }
@@ -204,6 +203,22 @@ public class WorkForceRepository implements WorkForceInterface {
         }
 
         return workforces;
+    }
+
+    @Override
+    public boolean deleteByProjectId(Long projectId) {
+        String sql = "DELETE FROM labor WHERE project_id = ?";
+        try(PreparedStatement preparedStatement = connection.prepareStatement(sql)){
+            preparedStatement.setLong(1, projectId);
+            int result = preparedStatement.executeUpdate();
+            if (result > 0) {
+                return true;
+            }
+
+        }catch (SQLException sqlException) {
+            System.out.println("Error deleting labor: " + sqlException.getMessage());
+        }
+        return false;
     }
 
 

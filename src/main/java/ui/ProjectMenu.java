@@ -5,21 +5,27 @@ import main.java.domain.entities.Material;
 import main.java.domain.entities.Project;
 import main.java.domain.entities.WorkForce;
 import main.java.domain.enums.ProjectStatus;
+import main.java.service.MaterialService;
 import main.java.service.ProjectService;
+import main.java.service.WorkForceService;
 
 import java.util.Scanner;
 
 public class ProjectMenu {
 
     private final ProjectService projectService;
+    private final MaterialService materialService;
+    private final WorkForceService workForceService;
     private final ClientMenu clientMenu;
     private final Scanner scanner;
     private Client selectedClient;
     private final MaterialMenu materialMenu;
     private final WorkForceMenu workForceMenu;
 
-    public ProjectMenu(ProjectService projectService, ClientMenu clientMenu, MaterialMenu materialMenu, WorkForceMenu workForceMenu) {
+    public ProjectMenu(ProjectService projectService, MaterialService materialService, WorkForceService workForceService, ClientMenu clientMenu, MaterialMenu materialMenu, WorkForceMenu workForceMenu) {
         this.projectService = projectService;
+        this.materialService = materialService;
+        this.workForceService = workForceService;
         this.clientMenu = clientMenu;
         this.materialMenu = materialMenu;
         this.workForceMenu = workForceMenu;
@@ -31,7 +37,8 @@ public class ProjectMenu {
             System.out.println("\n--- Search for a Client ---");
             System.out.println("1. Search for an Existing Client");
             System.out.println("2. Add a New Client");
-            System.out.println("3. Exit");
+            System.out.println("3. Delete a Project");
+            System.out.println("4. Exit");
 
             System.out.print("Enter your choice: ");
             int choice = scanner.nextInt();
@@ -45,6 +52,9 @@ public class ProjectMenu {
                     addNewClient();
                     break;
                 case 3:
+                    delete();
+                    break;
+                case 4:
                     System.out.println("Exiting...");
                     return;
                 default:
@@ -150,6 +160,15 @@ public class ProjectMenu {
 
             System.out.println("-------------\n");
         });
+    }
+
+
+    public void delete(){
+        System.out.print("Enter Project Id : ");
+        Long id = scanner.nextLong();
+        this.projectService.delete(id);
+//        this.workForceService.deleteByProjectId(id);
+//        this.materialService.deleteByProjectId(id);
     }
 
 }

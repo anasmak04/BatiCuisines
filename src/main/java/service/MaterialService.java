@@ -21,6 +21,9 @@ public class MaterialService {
         return materialRepository.save(material);
     }
 
+    public boolean deleteByProjectId(Long id) {
+        return materialRepository.deleteByProjectId(id);
+    }
 
     public Optional<Material> findById(Long id) {
         return materialRepository.findById(id);

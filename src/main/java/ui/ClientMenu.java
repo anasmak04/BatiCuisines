@@ -3,6 +3,7 @@ package main.java.ui;
 import main.java.domain.entities.Client;
 import main.java.exception.ClientNotFoundException;
 import main.java.service.ClientService;
+import main.java.utils.ClientHelper;
 
 import java.util.List;
 import java.util.Optional;
@@ -88,16 +89,7 @@ public class ClientMenu {
 
 
     public Client addNewClient() {
-        System.out.println("\n--- Add a new client ---");
-        System.out.print("Enter the name for a client : ");
-        String name = scanner.nextLine();
-        System.out.print("Enter the address for a client : ");
-        String address = scanner.nextLine();
-        System.out.print("Enter the phone number for a client : ");
-        String phoneNumber = scanner.nextLine();
-        System.out.print("Enter status for a client is professional or not : ");
-        boolean status = scanner.nextBoolean();
-        Client client = new Client(0L, name, address, phoneNumber, status);
+        Client client = ClientHelper.getClientDetails(null);
         return clientService.save(client);
     }
 
@@ -127,20 +119,13 @@ public class ClientMenu {
 
 
     public void update() {
-        System.out.println("\n--- Update client ---");
-        System.out.print("Enter the Id  : ");
+        System.out.print("Enter the Id: ");
         Long id = scanner.nextLong();
-        Client clientOpt = clientService.findById(id).orElseThrow(() -> new ClientNotFoundException("Client Not Found"));
-        System.out.print("Enter new name: ");
-        String name = scanner.nextLine();
-        System.out.print("Enter new address: ");
-        String address = scanner.nextLine();
-        System.out.print("Enter new phone number: ");
-        String phoneNumber = scanner.nextLine();
-        System.out.print("Enter if  professional: ");
-        boolean status = scanner.nextBoolean();
-        Client client1 = new Client(id, name, address, phoneNumber, status);
-        clientService.update(client1);
+        scanner.nextLine();
+        clientService.findById(id)
+                .orElseThrow(() -> new ClientNotFoundException("Client Not Found"));
+        Client updatedClient = ClientHelper.getClientDetails(id);
+        clientService.update(updatedClient);
     }
 
 

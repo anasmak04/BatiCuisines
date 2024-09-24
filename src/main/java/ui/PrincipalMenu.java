@@ -10,6 +10,7 @@ public class PrincipalMenu {
     private final ClientMenu clientMenu;
     private final CostCalculationMenu costCalculationMenu;
     private final ComponentMenu componentMenu;
+
     public PrincipalMenu(ProjectMenu projectMenu, DevisMenu devisMenu, ClientMenu clientMenu, CostCalculationMenu costCalculationMenu, ComponentMenu componentMenu) {
         this.projectMenu = projectMenu;
         this.devisMenu = devisMenu;

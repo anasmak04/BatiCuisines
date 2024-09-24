@@ -36,7 +36,7 @@ public class ProjectService  {
         return this.projectRepository.findById(id);
     }
 
-    public Project findProjectByName(String name) {
+    public Optional<Project> findProjectByName(String name) {
        return projectRepository.findProjectByName(name);
     }
 

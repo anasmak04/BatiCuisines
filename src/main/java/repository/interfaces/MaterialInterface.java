@@ -5,4 +5,5 @@ import java.util.List;
 
 public interface MaterialInterface extends CrudInterface<Material>{
     List<Material> findAllByProjectId(Long projectId);
+    boolean deleteByProjectId(Long projectId);
 }
