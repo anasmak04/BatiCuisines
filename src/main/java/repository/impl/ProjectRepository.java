@@ -29,7 +29,6 @@ public class ProjectRepository implements ProjectInterface {
             ResultSet resultSet = preparedStatement.executeQuery();
             if (resultSet.next()) {
                 project.setId(resultSet.getLong("id"));
-                System.out.println("Project saved with ID: " + project.getId());
                 return project;
             } else {
                 throw new SQLException("Creating project failed, no ID obtained.");
@@ -113,8 +112,8 @@ public class ProjectRepository implements ProjectInterface {
                 "    projects p\n" +
                 "    LEFT JOIN clients cl ON p.client_id = cl.id\n" +
                 "    LEFT JOIN components comp ON p.id = comp.project_id\n" +
-                "    LEFT JOIN materials ma ON comp.id = ma.component_id\n" +
-                "    LEFT JOIN labor le ON comp.id = le.component_id;";
+                "    LEFT JOIN materials ma ON comp.id = ma.id\n" +
+                "    LEFT JOIN labor le ON comp.id = le.id;";
 
         List<Project> projects = new ArrayList<>();
 
@@ -164,7 +163,6 @@ public class ProjectRepository implements ProjectInterface {
                 material.setQuantity(resultSet.getDouble("quantity"));
                 material.setTransportCost(resultSet.getDouble("transportCost"));
                 material.setCoefficientQuality(resultSet.getDouble("coefficientQuality"));
-//                material.setComponent(component);
 
                 component.addMaterial(material);
 
@@ -175,7 +173,6 @@ public class ProjectRepository implements ProjectInterface {
                 workForce.setHourlyCost(resultSet.getDouble("hourlyCost"));
                 workForce.setWorkingHours(resultSet.getInt("workingHours"));
                 workForce.setWorkerProductivity(resultSet.getDouble("workerProductivity"));
-//                workForce.setComponent(component);
 
                 component.addWorkForce(workForce);
 
@@ -223,7 +220,11 @@ public class ProjectRepository implements ProjectInterface {
             int result = preparedStatement.executeUpdate();
             if (result == 1) {
                 System.out.println("Project deleted successfully");
+                if(new ComponentRepository().removeComponentByProjectId(id)){
+                    System.out.println("Component deleted successfully");
+                }
                 return true;
+
             } else {
                 throw new ProjectNotFoundException("Delete failed, project not found");
             }
@@ -234,45 +235,51 @@ public class ProjectRepository implements ProjectInterface {
     }
 
 
-    public boolean updateFields(Long projectId, double marginProfit, double totalCost) {
-        String sql = "UPDATE projects SET profitMargin ? , totalCost = ? WHERE id = ?";
-        try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
-            preparedStatement.setDouble(1, marginProfit);
-            preparedStatement.setDouble(2, totalCost);
-            preparedStatement.setLong(3, projectId);
-            int result = preparedStatement.executeUpdate();
-            if (result == 1) {
-                System.out.println("Project updated successfully");
-            } else {
-                System.out.println("Update failed, project not found");
-            }
-        } catch (SQLException sqlException) {
-            System.out.println(sqlException.getMessage());
-        }
-        return false;
-    }
+
 
     @Override
-    public Project findProjectByName(String name) {
-        String sql = "SELECT id , projectName FROM projects WHERE projectName = ?";
-        Project project = new Project();
+    public Optional<Project> findProjectByName(String name) {
+        String sql = "SELECT\n" +
+                "    p.projectname AS projectName,\n" +
+                "    p.profitmargin AS profitMargin,\n" +
+                "    p.status AS status,\n" +
+                "    p.surface AS surface,\n" +
+                "    p.totalcost AS totalCost,\n" +
+                "    p.id AS id,\n" +
+                "    c.id AS client_id,\n" +
+                "    c.name AS client_name,\n" +
+                "    c.address AS client_address,\n" +
+                "    c.isprofessional AS isProfessional\n" +
+                "FROM projects p\n" +
+                "         JOIN clients c ON c.id = p.client_id\n" +
+                "WHERE p.projectname = ?;\n";
         try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
             preparedStatement.setString(1, name);
             ResultSet resultSet = preparedStatement.executeQuery();
+            Project project = null;
             if (resultSet.next()) {
-                Long id = resultSet.getLong("id");
-                project.setId(id);
-                project.setProjectName(resultSet.getString("projectName"));
-            } else {
-                throw new ProjectNotFoundException("Project not found");
+                Client client = new Client();
+                client.setId(resultSet.getLong("client_id"));
+                client.setName(resultSet.getString("client_name"));
+                client.setAddress(resultSet.getString("client_address"));
+                client.setProfessional(resultSet.getBoolean("isProfessional"));
+                project = new Project(
+                        resultSet.getLong("id"),
+                        resultSet.getString("projectName"),
+                        resultSet.getDouble("profitMargin"),
+                        resultSet.getDouble("totalCost"),
+                        resultSet.getString("status"),
+                        resultSet.getDouble("surface"),
+                        client
+                );
             }
-
-        } catch (SQLException sqlException) {
-            System.out.println(sqlException.getMessage());
+            return Optional.ofNullable(project);
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
         }
-
-        return project;
+        return Optional.empty();
     }
+
 
     @Override
     public void updateProjectFields(Long projctId, double marginProfit, double totalCost) {

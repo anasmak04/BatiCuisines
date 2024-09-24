@@ -87,5 +87,18 @@ public class Component {
     public void addWorkForce(WorkForce workForce) {
         this.workForces.add(workForce);
     }
+
+    @Override
+    public String toString() {
+        return "Component{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", componentType='" + componentType + '\'' +
+                ", vatRate=" + vatRate +
+                ", project=" + project +
+                ", materials=" + materials +
+                ", workForces=" + workForces +
+                '}';
+    }
 }
 

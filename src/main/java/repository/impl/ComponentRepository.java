@@ -46,7 +46,6 @@ public class ComponentRepository implements ComponentInterface {
     }
 
 
-
     @Override
     public Optional<Component> findById(Long id) {
         String query = "SELECT * FROM components WHERE id = ?";
@@ -144,10 +143,9 @@ public class ComponentRepository implements ComponentInterface {
             preparedStatement.setDouble(3, component.getVatRate());
             preparedStatement.setLong(4, component.getId());
             int result = preparedStatement.executeUpdate();
-            if (result > 0) {
-                System.out.println("Component saved successfully");
-            } else {
+            if (result <= 0) {
                 throw new ComponentNotFoundException("component saved not found");
+
             }
         } catch (SQLException e) {
             System.out.println(e.getMessage());
@@ -176,15 +174,41 @@ public class ComponentRepository implements ComponentInterface {
     @Override
     public double findVatRateForComponent(Long id) {
         String sql = "SELECT vatRate FROM components WHERE id = ?";
-        try(PreparedStatement preparedStatement = connection.prepareStatement(sql)){
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
             preparedStatement.setLong(1, id);
             ResultSet resultSet = preparedStatement.executeQuery();
-            if(resultSet.next()) {
+            if (resultSet.next()) {
                 return resultSet.getDouble("vatRate");
             }
-        }catch (SQLException sqlException) {
+        } catch (SQLException sqlException) {
             System.out.println(sqlException.getMessage());
         }
         return 0.0;
     }
+
+    @Override
+    public boolean removeComponentByProjectId(Long projectId) {
+        String sql = "DELETE FROM components WHERE project_id = ?";
+
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+            preparedStatement.setLong(1, projectId);
+
+            int result = preparedStatement.executeUpdate();
+
+            if (result > 0) {
+                Optional<Project> project = new ProjectRepository().findById(projectId);
+
+                if (project.isPresent()) {
+                    Project currentProject = project.get();
+                    currentProject.getComponents().removeIf(component -> component.getProject().getId().equals(projectId));
+                    return true;
+                }
+            }
+        } catch (SQLException sqlException) {
+            System.out.println(sqlException.getMessage());
+        }
+
+        return false;
+    }
+
 }

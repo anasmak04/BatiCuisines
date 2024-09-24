@@ -1,12 +1,11 @@
 package main.java.ui;
 
-import main.java.domain.entities.Component;
 import main.java.domain.entities.Material;
 import main.java.domain.entities.Project;
-import main.java.domain.enums.ComponentType;
 import main.java.exception.MaterialNotFoundException;
 import main.java.service.ComponentService;
 import main.java.service.MaterialService;
+import main.java.utils.MaterialHelper;
 
 import java.util.List;
 import java.util.Scanner;
@@ -70,29 +69,8 @@ public class MaterialMenu {
         Material material = null;
 
         do {
-            System.out.println("--- Add Material ---");
 
-            System.out.print("Enter the name of the material: ");
-            String name = scanner.nextLine();
-
-            System.out.print("Enter the quantity of this material: ");
-            double quantity = scanner.nextDouble();
-
-            System.out.print("Enter the unit cost of the material (€/m² or €/litre): ");
-            double unitCost = scanner.nextDouble();
-
-            System.out.print("Enter the transport cost of the material (€): ");
-            double transportCost = scanner.nextDouble();
-
-            System.out.print("Enter the quality coefficient of the material (1.0 = standard, > 1.0 = high quality): ");
-            double coefficientQuality = scanner.nextDouble();
-
-            System.out.print("Enter the VAT rate of the material: ");
-            double vatRate = scanner.nextDouble();
-            scanner.nextLine();
-
-            material = new Material(0L, name, "Material", vatRate, project, unitCost, quantity, transportCost, coefficientQuality);
-
+            material = MaterialHelper.getMaterialDetails(0L, project);
 
             Material savedMaterial = materialService.save(material);
             if (savedMaterial != null) {
@@ -138,7 +116,6 @@ public class MaterialMenu {
     }
 
 
-
     public void findById() {
         System.out.println("--- Find Material by Id ---");
         System.out.print("Enter the id of the material: ");
@@ -161,38 +138,15 @@ public class MaterialMenu {
 
 
     public void update() {
-        System.out.println("--- Update Material ---");
         System.out.print("Enter the id of the material: ");
         Long id = scanner.nextLong();
 
         scanner.nextLine();
 
         Material material = materialService.findById(id).orElseThrow(() -> new MaterialNotFoundException("material not found"));
-
-        System.out.print("Enter the name of the material: ");
-        String name = scanner.nextLine();
-
-        System.out.print("Enter the quantity of this material: ");
-        double quantity = scanner.nextDouble();
-
-        System.out.print("Enter the unit cost of the material (€/m² or €/litre): ");
-        double unitCost = scanner.nextDouble();
-
-        System.out.print("Enter the transport cost of the material (€): ");
-        double transportCost = scanner.nextDouble();
-
-        System.out.print("Enter the quality coefficient of the material (1.0 = standard, > 1.0 = high quality): ");
-        double coefficientQuality = scanner.nextDouble();
-
-        System.out.print("Enter the VAT rate of the material: ");
-        double vatRate = scanner.nextDouble();
-        scanner.nextLine();
-
         Project project = new Project();
 
-        System.out.println(name);
-
-        Material material1 = new Material(id, name, ComponentType.MATERIAL.name(), vatRate, project, quantity, unitCost, transportCost, coefficientQuality);
+        Material material1 = MaterialHelper.getMaterialDetails(id, project);
         materialService.update(material1);
     }
 

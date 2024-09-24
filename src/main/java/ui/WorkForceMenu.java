@@ -7,6 +7,7 @@ import main.java.domain.enums.ComponentType;
 import main.java.exception.LaborNotFoundException;
 import main.java.service.ComponentService;
 import main.java.service.WorkForceService;
+import main.java.utils.WorkforceHelper;
 
 import java.util.List;
 import java.util.Scanner;
@@ -66,28 +67,9 @@ public class WorkForceMenu {
         String continueChoice;
         WorkForce workForce = null;
         do {
-            System.out.println("--- Add Workforce ---");
 
-            System.out.print("Enter the name of the Workforce: ");
-            String name = scanner.nextLine();
-
-            System.out.print("Enter the VAT rate of the workforce: ");
-            double vatRate = scanner.nextDouble();
-            scanner.nextLine();
-
-            System.out.print("Enter the hourly rate for this labor (€/h): ");
-            double hourlyRate = scanner.nextDouble();
-
-            System.out.print("Enter the number of hours worked: ");
-            double hoursWorked = scanner.nextDouble();
-
-            System.out.print("Enter the productivity factor (1.0 = standard, > 1.0 = high productivity): ");
-            double productivityFactor = scanner.nextDouble();
-
-
-            workForce = new WorkForce(0L, name, "workforce", vatRate, project, hourlyRate, hoursWorked, productivityFactor);
+            workForce = WorkforceHelper.getWorkforceDetails(null);
             workForceService.save(workForce);
-
             System.out.print("Would you like to add another workforce? (y/n): ");
             continueChoice = scanner.nextLine().trim().toLowerCase();
 
@@ -100,23 +82,11 @@ public class WorkForceMenu {
     public void update() {
         System.out.print("Enter id of workforce : ");
         Long id = scanner.nextLong();
-       workForceService.findById(id).orElseThrow(() -> new LaborNotFoundException("workforce not found"));
-       scanner.nextLine();
-        System.out.print("Enter name of workforce : ");
-        String name = scanner.nextLine();
-        System.out.print("Enter number of hours worked : ");
-        double hoursWorked = scanner.nextDouble();
-        System.out.print("Enter number of hourly cost : ");
-        double hourlyCost = scanner.nextDouble();
-        System.out.print("Enter productivity factor : ");
-        double productivityFactor = scanner.nextDouble();
-        System.out.print("Enter the name of component ");
-        String componentName = scanner.nextLine();
-        System.out.print("Enter vat rate : ");
-        double vatRate = scanner.nextDouble();
-        Project project = new Project();
+        workForceService.findById(id).orElseThrow(() -> new LaborNotFoundException("workforce not found"));
+        scanner.nextLine();
 
-        WorkForce workForce1 = new WorkForce(id, name, ComponentType.WORKFORCE.name(), vatRate, project, hourlyCost, hoursWorked, productivityFactor);
+
+        WorkForce workForce1 = WorkforceHelper.getWorkforceDetails(id);
         this.workForceService.update(workForce1);
     }
 
@@ -125,8 +95,6 @@ public class WorkForceMenu {
         Long id = scanner.nextLong();
         this.workForceService.delete(id);
     }
-
-
 
 
     public void findById() {
@@ -151,7 +119,6 @@ public class WorkForceMenu {
             System.out.println("-------------------------------------------------------------------------------");
         });
     }
-
 
 
     public void findAll() {
@@ -180,7 +147,6 @@ public class WorkForceMenu {
 
         System.out.println("-------------------------------------------------------------------------------");
     }
-
 
 
 }

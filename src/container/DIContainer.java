@@ -48,9 +48,12 @@ public class DIContainer {
 
         container.register(ProjectMenu.class, new ProjectMenu(
                 container.get(ProjectService.class),
+                container.get(MaterialService.class),
+                container.get(WorkForceService.class),
                 container.get(ClientMenu.class),
                 container.get(MaterialMenu.class),
                 container.get(WorkForceMenu.class)
+
         ));
         container.register(CostCalculationMenu.class, new CostCalculationMenu(
                 container.get(ProjectRepository.class),

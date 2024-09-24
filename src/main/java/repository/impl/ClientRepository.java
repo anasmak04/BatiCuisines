@@ -94,14 +94,10 @@ public class ClientRepository implements ClientInterface {
             preparedStatement.setBoolean(4, client.isProfessional());
             preparedStatement.setLong(5, client.getId());
             preparedStatement.executeUpdate();
-            connection.commit();
         } catch (SQLException e) {
-            try {
-                connection.rollback();
-            } catch (SQLException ex) {
-                System.out.println(ex.getMessage());
+                System.out.println(e.getMessage());
             }
-        }
+
         return client;
     }
 

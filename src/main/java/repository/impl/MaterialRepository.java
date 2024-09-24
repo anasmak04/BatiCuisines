@@ -49,7 +49,6 @@ public class MaterialRepository implements MaterialInterface {
             if (resultSet.next()) {
                 Long generatedId = resultSet.getLong(1);
                 material.setId(generatedId);
-                System.out.println("Material saved successfully with ID: " + generatedId);
             } else {
                 throw new SQLException("Failed to save material, no ID obtained.");
             }
@@ -226,6 +225,24 @@ public class MaterialRepository implements MaterialInterface {
         }
 
         return materials;
+    }
+
+    @Override
+    public boolean deleteByProjectId(Long projectId) {
+        String sql = "DELETE FROM materials WHERE project_id = ?";
+        try(PreparedStatement preparedStatement = connection.prepareStatement(sql)){
+            preparedStatement.setLong(1, projectId);
+            int result = preparedStatement.executeUpdate();
+            if (result == 1) {
+                return true;
+            }
+            else{
+                throw new MaterialNotFoundException("material delete issue");
+            }
+        }catch (SQLException sqlException) {
+            System.out.println(sqlException.getMessage());
+        }
+        return false;
     }
 
 

@@ -5,7 +5,7 @@ import main.java.domain.entities.Material;
 import main.java.domain.entities.Project;
 import main.java.domain.entities.WorkForce;
 import main.java.domain.enums.ProjectStatus;
-import main.java.exception.DevisNotFoundException;
+import main.java.exception.ProjectNotFoundException;
 import main.java.repository.impl.ComponentRepository;
 import main.java.repository.impl.ProjectRepository;
 import main.java.service.DevisService;
@@ -25,7 +25,6 @@ public class CostCalculationMenu {
     private final WorkForceService workForceService;
     private final DevisService devisService;
     private final DevisMenu devisMenu;
-    private final double discount = 0.7;
 
     public CostCalculationMenu(ProjectRepository projectRepository, ComponentRepository componentRepository,
                                MaterialService materialService, WorkForceService workForceService, DevisService devisService, DevisMenu devisMenu) {
@@ -47,15 +46,16 @@ public class CostCalculationMenu {
     public void save() {
         System.out.println("--- Total Cost Calculation ---");
 
-        System.out.print("Enter project ID: ");
-        Long projectId = scanner.nextLong();
+        System.out.print("Enter project Name: ");
+        String projectName = scanner.nextLine();
 
-        Project project = projectRepository.findById(projectId).orElseThrow(() ->
-                new RuntimeException("Project not found"));
+        Project project = projectRepository.findProjectByName(projectName).orElseThrow(
+                () -> new ProjectNotFoundException("project name not found")
+        );
 
 
-        List<Material> materials = materialService.findAllByProjectId(projectId);
-        List<WorkForce> workforce = workForceService.findAllByProjectId(projectId);
+        List<Material> materials = materialService.findAllByProjectId(project.getId());
+        List<WorkForce> workforce = workForceService.findAllByProjectId(project.getId());
 
         double totalMaterialBeforeVat = 0;
         double totalMaterialAfterVat = 0;
@@ -87,13 +87,13 @@ public class CostCalculationMenu {
         if (getYesNoInput("Do you want to apply a profit margin to the project? (y/n): ")) {
             System.out.print("Enter profit margin percentage: ");
             marginRate = scanner.nextDouble();
-            scanner.nextLine();  // Consume the newline character
+            scanner.nextLine();
             project.setProfitMargin(marginRate);
             double profitMargin = totalCost * marginRate / 100;
             totalCost += profitMargin;
         }
 
-        projectRepository.updateProjectFields(projectId, project.getProfitMargin(), totalCost);
+        projectRepository.updateProjectFields(project.getId(), project.getProfitMargin(), totalCost);
 
         System.out.println("\n--- Calculation Result ---");
         System.out.println("Project Name: " + project.getProjectName());
@@ -109,6 +109,9 @@ public class CostCalculationMenu {
 
         if (project.getClient().isProfessional()) {
             System.out.println("\n--- Professional Client Discount Applied ---");
+            System.out.println("Enter client discount");
+            double discount = scanner.nextDouble();
+            scanner.nextLine();
             totalCost *= discount;
             System.out.println("Discounted Total Cost: " + String.format("%.2f", totalCost) + " €");
         }
@@ -134,13 +137,16 @@ public class CostCalculationMenu {
 
         if (choice.equals("yes") || choice.equals("y")) {
             devisService.updateDevisStatus(devis.getId());
-            projectRepository.updateProjectStatus(projectId, ProjectStatus.FINISHED.name());
+            projectRepository.updateProjectStatus(project.getId(), ProjectStatus.FINISHED.name());
             System.out.println("Devis accepted. Project marked as FINISHED.");
         } else {
             devisService.cancelDevisAndProjectIfNotAccepted(devis.getId(), validatedDateParse);
-            projectRepository.updateProjectStatus(projectId, ProjectStatus.CANCELLED.name());
+            projectRepository.updateProjectStatus(project.getId(), ProjectStatus.CANCELLED.name());
             System.out.println("Devis rejected. Project marked as CANCELLED.");
         }
 
     }
+
+
+
 }
