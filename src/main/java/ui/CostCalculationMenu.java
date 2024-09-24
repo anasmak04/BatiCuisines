@@ -27,7 +27,7 @@ public class CostCalculationMenu {
     private final DevisMenu devisMenu;
 
     public CostCalculationMenu(ProjectRepository projectRepository, ComponentRepository componentRepository,
-        MaterialService materialService, WorkForceService workForceService, DevisService devisService, DevisMenu devisMenu) {
+                               MaterialService materialService, WorkForceService workForceService, DevisService devisService, DevisMenu devisMenu) {
         this.devisService = devisService;
         this.devisMenu = devisMenu;
         scanner = new Scanner(System.in);
