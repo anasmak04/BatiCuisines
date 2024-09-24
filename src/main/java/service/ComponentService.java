@@ -18,16 +18,13 @@ public class ComponentService {
         return this.componentRepository.save(component);
     }
 
-
     public Optional<Component> findById(Long id) {
         return componentRepository.findById(id);
     }
 
-
     public List<Component> findAll() {
         return componentRepository.findAll();
     }
-
 
     public Component update(Component component) {
         return componentRepository.update(component);

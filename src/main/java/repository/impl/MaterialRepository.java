@@ -28,21 +28,17 @@ public class MaterialRepository implements MaterialInterface {
 
     @Override
     public Material save(Material material) {
-        Component savedComponent = componentRepository.save(material);
-        material.setId(savedComponent.getId());
-
-        String sql = "INSERT INTO materials (id, name, unitCost, quantity, transportCost, qualityCoefficient, project_id, componentType, vatRate) " +
-                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING id";
+        String sql = "INSERT INTO materials ( name, unitCost, quantity, transportCost, qualityCoefficient, project_id, componentType, vatRate) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?) RETURNING id";
         try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
-            preparedStatement.setLong(1, material.getId());
-            preparedStatement.setString(2, material.getName());
-            preparedStatement.setDouble(3, material.getUnitCost());
-            preparedStatement.setDouble(4, material.getQuantity());
-            preparedStatement.setDouble(5, material.getTransportCost());
-            preparedStatement.setDouble(6, material.getCoefficientQuality());
-            preparedStatement.setLong(7, material.getProject().getId());
-            preparedStatement.setString(8, material.getComponentType());
-            preparedStatement.setDouble(9, material.getVatRate());
+            preparedStatement.setString(1, material.getName());
+            preparedStatement.setDouble(2, material.getUnitCost());
+            preparedStatement.setDouble(3, material.getQuantity());
+            preparedStatement.setDouble(4, material.getTransportCost());
+            preparedStatement.setDouble(5, material.getCoefficientQuality());
+            preparedStatement.setLong(6, material.getProject().getId());
+            preparedStatement.setString(7, material.getComponentType());
+            preparedStatement.setDouble(8, material.getVatRate());
 
             System.out.println(preparedStatement);
             ResultSet resultSet = preparedStatement.executeQuery();

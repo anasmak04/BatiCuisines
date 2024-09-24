@@ -29,20 +29,16 @@ public class WorkForceRepository implements WorkForceInterface {
     @Override
     public WorkForce save(WorkForce workForce) {
 
-        Component savedComponent = componentRepository.save(workForce);
-        workForce.setId(savedComponent.getId());
-
-        String sql = "INSERT INTO labor (id, name, hourlyRate, workHours, workerProductivity, project_id , componentType , vatRate) " +
-                "VALUES (?, ?, ?, ?, ? , ? , ? , ?) RETURNING id";
+        String sql = "INSERT INTO labor (name, hourlyRate, workHours, workerProductivity, project_id , componentType , vatRate) " +
+                "VALUES (?, ?, ?, ? , ? , ? , ?) RETURNING id";
         try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
-            preparedStatement.setLong(1, workForce.getId());
-            preparedStatement.setString(2, workForce.getName());
-            preparedStatement.setDouble(3, workForce.getHourlyCost());
-            preparedStatement.setDouble(4, workForce.getWorkingHours());
-            preparedStatement.setDouble(5, workForce.getWorkerProductivity());
-            preparedStatement.setLong(6, workForce.getProject().getId());
-            preparedStatement.setString(7, workForce.getComponentType());
-            preparedStatement.setDouble(8, workForce.getVatRate());
+            preparedStatement.setString(1, workForce.getName());
+            preparedStatement.setDouble(2, workForce.getHourlyCost());
+            preparedStatement.setDouble(3, workForce.getWorkingHours());
+            preparedStatement.setDouble(4, workForce.getWorkerProductivity());
+            preparedStatement.setLong(5, workForce.getProject().getId());
+            preparedStatement.setString(6, workForce.getComponentType());
+            preparedStatement.setDouble(7, workForce.getVatRate());
 
             ResultSet resultSet = preparedStatement.executeQuery();
             if (resultSet.next()) {
@@ -208,14 +204,14 @@ public class WorkForceRepository implements WorkForceInterface {
     @Override
     public boolean deleteByProjectId(Long projectId) {
         String sql = "DELETE FROM labor WHERE project_id = ?";
-        try(PreparedStatement preparedStatement = connection.prepareStatement(sql)){
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
             preparedStatement.setLong(1, projectId);
             int result = preparedStatement.executeUpdate();
             if (result > 0) {
                 return true;
             }
 
-        }catch (SQLException sqlException) {
+        } catch (SQLException sqlException) {
             System.out.println("Error deleting labor: " + sqlException.getMessage());
         }
         return false;
