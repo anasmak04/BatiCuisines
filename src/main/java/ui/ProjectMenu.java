@@ -167,8 +167,6 @@ public class ProjectMenu {
         System.out.print("Enter Project Id : ");
         Long id = scanner.nextLong();
         this.projectService.delete(id);
-//        this.workForceService.deleteByProjectId(id);
-//        this.materialService.deleteByProjectId(id);
     }
 
 }

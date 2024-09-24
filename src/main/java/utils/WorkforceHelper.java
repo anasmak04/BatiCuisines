@@ -9,7 +9,7 @@ import java.util.Scanner;
 public class WorkforceHelper {
     private static Scanner scanner = new Scanner(System.in);
 
-    public static WorkForce getWorkforceDetails(Long id) {
+    public static WorkForce getWorkforceDetails(Long id, Project project) {
         if (id != null) {
             System.out.println("\n--- Update Workforce ---");
         } else {
@@ -29,7 +29,6 @@ public class WorkforceHelper {
         System.out.print("Enter the number of hours worked: ");
         double hoursWorked = scanner.nextDouble();
 
-        Project project = new Project();
 
         System.out.print("Enter the productivity factor (1.0 = standard, > 1.0 = high productivity): ");
         double productivityFactor = scanner.nextDouble();

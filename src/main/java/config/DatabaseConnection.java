@@ -1,5 +1,6 @@
 package main.java.config;
 
+
 import org.flywaydb.core.Flyway;
 
 import java.sql.Connection;
@@ -11,6 +12,10 @@ public class DatabaseConnection {
     private static final String URL = System.getenv("DB_URL");
     private static final String USER = System.getenv("USERNAME");
     private static final String PASSWORD = System.getenv("PASSWORD");
+    private static Connection connection = null;
+
+    private DatabaseConnection() {
+    }
 
     public static void migrateDatabase() {
         Flyway flyway = Flyway.configure()
@@ -21,18 +26,22 @@ public class DatabaseConnection {
     }
 
     public static Connection getConnection() {
-        Connection connection = null;
-        try {
-            Class.forName("org.postgresql.Driver");
-            connection = DriverManager.getConnection(URL, USER, PASSWORD);
 
-            migrateDatabase();
+        if (connection == null) {
+            try {
+                Class.forName("org.postgresql.Driver");
+                connection = DriverManager.getConnection(URL, USER, PASSWORD);
 
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException("PostgreSQL JDBC Driver not found.", e);
-        } catch (SQLException e) {
-            throw new RuntimeException("Connection to PostgreSQL database failed.", e);
+                migrateDatabase();
+
+            } catch (ClassNotFoundException e) {
+                throw new RuntimeException("PostgreSQL JDBC Driver not found.", e);
+            } catch (SQLException e) {
+                throw new RuntimeException("Connection to PostgreSQL database failed.", e);
+            }
+
         }
+
 
         return connection;
     }

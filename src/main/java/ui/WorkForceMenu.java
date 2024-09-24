@@ -67,8 +67,7 @@ public class WorkForceMenu {
         String continueChoice;
         WorkForce workForce = null;
         do {
-
-            workForce = WorkforceHelper.getWorkforceDetails(null);
+            workForce = WorkforceHelper.getWorkforceDetails(null, project);
             workForceService.save(workForce);
             System.out.print("Would you like to add another workforce? (y/n): ");
             continueChoice = scanner.nextLine().trim().toLowerCase();
@@ -86,7 +85,7 @@ public class WorkForceMenu {
         scanner.nextLine();
 
 
-        WorkForce workForce1 = WorkforceHelper.getWorkforceDetails(id);
+        WorkForce workForce1 = WorkforceHelper.getWorkforceDetails(id, new Project());
         this.workForceService.update(workForce1);
     }
 

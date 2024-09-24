@@ -27,7 +27,7 @@ public class CostCalculationMenu {
     private final DevisMenu devisMenu;
 
     public CostCalculationMenu(ProjectRepository projectRepository, ComponentRepository componentRepository,
-                               MaterialService materialService, WorkForceService workForceService, DevisService devisService, DevisMenu devisMenu) {
+        MaterialService materialService, WorkForceService workForceService, DevisService devisService, DevisMenu devisMenu) {
         this.devisService = devisService;
         this.devisMenu = devisMenu;
         scanner = new Scanner(System.in);
@@ -57,32 +57,29 @@ public class CostCalculationMenu {
         List<Material> materials = materialService.findAllByProjectId(project.getId());
         List<WorkForce> workforce = workForceService.findAllByProjectId(project.getId());
 
-        double totalMaterialBeforeVat = 0;
-        double totalMaterialAfterVat = 0;
 
-        for (Material material : materials) {
-            double materialCostBeforeVat = materialService.calculateMaterialBeforeVatRate(material);
-            double materialCostAfterVat = materialService.calculateMaterialAfterVatRate(material);
+        double totalMaterialBeforeVat = materials.stream()
+                .mapToDouble(materialService::calculateMaterialBeforeVatRate)
+                .sum();
 
-            totalMaterialBeforeVat += materialCostBeforeVat;
-            totalMaterialAfterVat += materialCostAfterVat;
-        }
+        double totalMaterialAfterVat = materials.stream()
+                .mapToDouble(materialService::calculateMaterialAfterVatRate)
+                .sum();
 
-        double totalWorkforceBeforeVat = 0;
-        double totalWorkforceAfterVat = 0;
+        double totalWorkforceBeforeVat = workforce.stream()
+                .mapToDouble(workForceService::calculateWorkforceBeforeVat)
+                .sum();
 
-        for (WorkForce workForce : workforce) {
-            double workforceCostBeforeVat = workForceService.calculateWorkforceBeforeVat(workForce);
-            double workforceCostAfterVat = workForceService.calculateWorkforceAfterVat(workForce);
+        double totalWorkforceAfterVat = workforce.stream()
+                .mapToDouble(workForceService::calculateWorkforceAfterVat)
+                .sum();
 
-            totalWorkforceBeforeVat += workforceCostBeforeVat;
-            totalWorkforceAfterVat += workforceCostAfterVat;
-        }
 
-        double totalCostBeforeMargin = totalMaterialBeforeVat + totalWorkforceBeforeVat;
         double totalCostAfterVat = totalMaterialAfterVat + totalWorkforceAfterVat;
+        double totalCostBeforeMargin = totalCostAfterVat;
 
         double totalCost = totalCostAfterVat;
+
         double marginRate = 0.0;
         if (getYesNoInput("Do you want to apply a profit margin to the project? (y/n): ")) {
             System.out.print("Enter profit margin percentage: ");
@@ -113,7 +110,7 @@ public class CostCalculationMenu {
             double discount = scanner.nextDouble();
             scanner.nextLine();
             totalCost *= discount;
-            System.out.println("Discounted Total Cost: " + String.format("%.2f", totalCost) + " €");
+            System.out.print("Discounted Total Cost: " + String.format("%.2f", totalCost) + " €");
         }
 
         System.out.print("Enter issue date (yyyy-MM-dd): ");
@@ -146,7 +143,6 @@ public class CostCalculationMenu {
         }
 
     }
-
 
 
 }

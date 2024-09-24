@@ -10,9 +10,9 @@ public class MaterialHelper {
 
     public static Material getMaterialDetails(Long id, Project project) {
         if (id != null) {
-            System.out.println("\n--- Update Material ---");
-        } else {
             System.out.println("\n--- Add New Material ---");
+        } else {
+            System.out.println("\n--- Update Material ---");
         }
 
         System.out.print("Enter the name of the material: ");

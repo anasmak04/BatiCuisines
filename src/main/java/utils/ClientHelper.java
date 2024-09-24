@@ -24,7 +24,6 @@ public class ClientHelper {
         System.out.print("Is the client professional? (true/false): ");
         boolean status = scanner.nextBoolean();
         scanner.nextLine();
-
         return new Client(id != null ? id : 0L, name, address, phoneNumber, status);
     }
 

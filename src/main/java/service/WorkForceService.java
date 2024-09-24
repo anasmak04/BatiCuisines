@@ -40,9 +40,6 @@ public class WorkForceService {
     public boolean delete(Long id) {
         return this.workForceRepository.delete(id);
     }
-    public boolean deleteByProjectId(Long id) {
-        return this.workForceRepository.deleteByProjectId(id);
-    }
 
     public List<WorkForce> findAllByProjectId(Long projectId){
         return this.workForceRepository.findAllByProjectId(projectId);

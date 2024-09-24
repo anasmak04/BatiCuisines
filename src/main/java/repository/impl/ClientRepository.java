@@ -95,8 +95,8 @@ public class ClientRepository implements ClientInterface {
             preparedStatement.setLong(5, client.getId());
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
-                System.out.println(e.getMessage());
-            }
+            System.out.println(e.getMessage());
+        }
 
         return client;
     }
@@ -128,7 +128,7 @@ public class ClientRepository implements ClientInterface {
                 return Optional.of(mapResultSetToClient(rs));
             }
         } catch (SQLException e) {
-        System.out.println(e.getMessage());
+            System.out.println(e.getMessage());
         }
         return Optional.empty();
     }

@@ -186,29 +186,4 @@ public class ComponentRepository implements ComponentInterface {
         return 0.0;
     }
 
-    @Override
-    public boolean removeComponentByProjectId(Long projectId) {
-        String sql = "DELETE FROM components WHERE project_id = ?";
-
-        try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
-            preparedStatement.setLong(1, projectId);
-
-            int result = preparedStatement.executeUpdate();
-
-            if (result > 0) {
-                Optional<Project> project = new ProjectRepository().findById(projectId);
-
-                if (project.isPresent()) {
-                    Project currentProject = project.get();
-                    currentProject.getComponents().removeIf(component -> component.getProject().getId().equals(projectId));
-                    return true;
-                }
-            }
-        } catch (SQLException sqlException) {
-            System.out.println(sqlException.getMessage());
-        }
-
-        return false;
-    }
-
 }

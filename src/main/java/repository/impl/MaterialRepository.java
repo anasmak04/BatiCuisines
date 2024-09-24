@@ -39,8 +39,6 @@ public class MaterialRepository implements MaterialInterface {
             preparedStatement.setLong(6, material.getProject().getId());
             preparedStatement.setString(7, material.getComponentType());
             preparedStatement.setDouble(8, material.getVatRate());
-
-            System.out.println(preparedStatement);
             ResultSet resultSet = preparedStatement.executeQuery();
             if (resultSet.next()) {
                 Long generatedId = resultSet.getLong(1);
@@ -73,7 +71,7 @@ public class MaterialRepository implements MaterialInterface {
             preparedStatement.setLong(7, material.getId());
             System.out.println(preparedStatement);
             int rowsAffected = preparedStatement.executeUpdate();
-            if(rowsAffected == 0) {
+            if (rowsAffected == 0) {
                 throw new MaterialNotFoundException("something wrong when updating material");
             }
         } catch (SQLException e) {
@@ -168,8 +166,6 @@ public class MaterialRepository implements MaterialInterface {
     }
 
 
-
-
     @Override
     public boolean delete(Long id) {
         String sql = "DELETE FROM materials WHERE id = ?";
@@ -222,24 +218,5 @@ public class MaterialRepository implements MaterialInterface {
 
         return materials;
     }
-
-    @Override
-    public boolean deleteByProjectId(Long projectId) {
-        String sql = "DELETE FROM materials WHERE project_id = ?";
-        try(PreparedStatement preparedStatement = connection.prepareStatement(sql)){
-            preparedStatement.setLong(1, projectId);
-            int result = preparedStatement.executeUpdate();
-            if (result == 1) {
-                return true;
-            }
-            else{
-                throw new MaterialNotFoundException("material delete issue");
-            }
-        }catch (SQLException sqlException) {
-            System.out.println(sqlException.getMessage());
-        }
-        return false;
-    }
-
 
 }

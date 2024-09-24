@@ -30,7 +30,6 @@ public class ComponentService {
         return componentRepository.update(component);
     }
 
-
     public boolean delete(Long id) {
         return componentRepository.delete(id);
     }
