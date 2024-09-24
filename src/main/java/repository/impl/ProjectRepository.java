@@ -220,9 +220,6 @@ public class ProjectRepository implements ProjectInterface {
             int result = preparedStatement.executeUpdate();
             if (result == 1) {
                 System.out.println("Project deleted successfully");
-                if(new ComponentRepository().removeComponentByProjectId(id)){
-                    System.out.println("Component deleted successfully");
-                }
                 return true;
 
             } else {
