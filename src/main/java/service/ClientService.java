@@ -1,7 +1,7 @@
 package main.java.service;
 
 import main.java.domain.entities.Client;
-import main.java.repository.ClientRepository;
+import main.java.repository.impl.ClientRepository;
 import main.java.utils.Validations;
 
 import java.util.List;
@@ -35,11 +35,8 @@ public class ClientService {
         return this.clientRepository.findAll();
     }
 
-
     public Optional<Client> findByName(String name) {
         Validations.ClientByNameValidation(name);
         return this.clientRepository.findByName(name);
     }
-
-
 }

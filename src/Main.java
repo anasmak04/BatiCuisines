@@ -1,28 +1,30 @@
-import main.java.repository.*;
-import main.java.service.*;
-import main.java.ui.*;
+import container.DIContainer;
+import main.java.domain.entities.Component;
+import main.java.domain.entities.Project;
+import main.java.repository.impl.ProjectRepository;
+import main.java.ui.PrincipalMenu;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+
 
 public class Main {
-    public static void main(String[] args) {
-        ClientRepository clientRepository = new ClientRepository();
-        DevisRepository devisRepository = new DevisRepository();
-        DevisService devisService = new DevisService(devisRepository);
 
-        ComponentRepository componentRepository = new ComponentRepository();
-        WorkForceRepository workForceRepository = new WorkForceRepository(componentRepository);
-        MaterialRepository materialRepository = new MaterialRepository(componentRepository);
-        ProjectRepository projectRepository = new ProjectRepository(clientRepository,componentRepository,materialRepository,workForceRepository);
-        ProjectService projectService = new ProjectService(projectRepository);
-        DevisMenu devisMenu = new DevisMenu(devisService,projectService);
-        ClientService clientService = new ClientService(clientRepository);
-        ClientMenu clientMenu = new ClientMenu(clientService);
-        MaterialService materialService = new MaterialService(materialRepository);
-        ComponentService componentService = new ComponentService(componentRepository);
-        MaterialMenu materialMenu = new MaterialMenu(materialService,componentService);
-        WorkForceService workForceService = new WorkForceService(workForceRepository);
-        WorkForceMenu workForceMenu = new WorkForceMenu(workForceService,componentService);
-        ProjectMenu projectMenu = new ProjectMenu(projectService,clientMenu,materialMenu, workForceMenu);
-        PrincipalMenu principalMenu = new PrincipalMenu(projectMenu,devisMenu);
+
+
+//    public static List<List<Component>> componentsByProject(){
+//        List<Project> projects = new ProjectRepository().findAll();
+//        return projects.stream()
+//                .map(project -> project.getComponents())
+//                .collect(Collectors.toList());
+//    }
+
+
+    public static void main(String[] args) {
+        DIContainer container = DIContainer.initialize();
+        PrincipalMenu principalMenu = container.get(PrincipalMenu.class);
         principalMenu.Menu();
+
     }
 }

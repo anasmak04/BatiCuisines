@@ -1,4 +1,4 @@
-package main.java.repository;
+package main.java.repository.impl;
 
 import main.java.config.DatabaseConnection;
 import main.java.domain.entities.Client;
@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class ComponentRepository implements ComponentInterface<Component> {
+public class ComponentRepository implements ComponentInterface {
     private Connection connection;
 
     public ComponentRepository() {
@@ -143,10 +143,9 @@ public class ComponentRepository implements ComponentInterface<Component> {
             preparedStatement.setDouble(3, component.getVatRate());
             preparedStatement.setLong(4, component.getId());
             int result = preparedStatement.executeUpdate();
-            if (result > 0) {
-                System.out.println("Component saved successfully");
-            } else {
+            if (result <= 0) {
                 throw new ComponentNotFoundException("component saved not found");
+
             }
         } catch (SQLException e) {
             System.out.println(e.getMessage());
@@ -173,20 +172,43 @@ public class ComponentRepository implements ComponentInterface<Component> {
     }
 
     @Override
-    public void updateFieldsComponent(Long componentId, double vta) {
-        String sql = "UPDATE components SET vatRate ?  WHERE id = ?";
-        try(PreparedStatement preparedStatement = connection.prepareStatement(sql)){
-            preparedStatement.setDouble(1, vta);
-            preparedStatement.setLong(2, componentId);
-            int result = preparedStatement.executeUpdate();
-            if (result == 1) {
-                System.out.println("component updated successfully");
+    public double findVatRateForComponent(Long id) {
+        String sql = "SELECT vatRate FROM components WHERE id = ?";
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+            preparedStatement.setLong(1, id);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            if (resultSet.next()) {
+                return resultSet.getDouble("vatRate");
             }
-            else{
-                System.out.println("Update failed, project not found");
-            }
-        }catch (SQLException sqlException){
+        } catch (SQLException sqlException) {
             System.out.println(sqlException.getMessage());
         }
+        return 0.0;
     }
+
+    @Override
+    public boolean removeComponentByProjectId(Long projectId) {
+        String sql = "DELETE FROM components WHERE project_id = ?";
+
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+            preparedStatement.setLong(1, projectId);
+
+            int result = preparedStatement.executeUpdate();
+
+            if (result > 0) {
+                Optional<Project> project = new ProjectRepository().findById(projectId);
+
+                if (project.isPresent()) {
+                    Project currentProject = project.get();
+                    currentProject.getComponents().removeIf(component -> component.getProject().getId().equals(projectId));
+                    return true;
+                }
+            }
+        } catch (SQLException sqlException) {
+            System.out.println(sqlException.getMessage());
+        }
+
+        return false;
+    }
+
 }

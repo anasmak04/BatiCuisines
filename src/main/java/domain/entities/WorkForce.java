@@ -4,20 +4,17 @@ public class WorkForce extends Component {
     private double hourlyCost;
     private double workingHours;
     private double workerProductivity;
-    private Component component;
 
-    public WorkForce(Long id, String name, String componentType, double vatRate, Project project, double hourlyCost, double workingHours, double workerProductivity, Component component) {
+    public WorkForce(Long id, String name, String componentType, double vatRate, Project project, double hourlyCost, double workingHours, double workerProductivity) {
         super(id, name, componentType, vatRate, project);
         this.hourlyCost = hourlyCost;
         this.workingHours = workingHours;
         this.workerProductivity = workerProductivity;
-        this.component = component;
     }
 
-    public WorkForce(){
+    public WorkForce() {
 
     }
-
     public double getHourlyCost() {
         return hourlyCost;
     }
@@ -40,13 +37,5 @@ public class WorkForce extends Component {
 
     public void setWorkerProductivity(double workerProductivity) {
         this.workerProductivity = workerProductivity;
-    }
-
-    public Component getComponent() {
-        return component;
-    }
-
-    public void setComponent(Component component) {
-        this.component = component;
     }
 }
